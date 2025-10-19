@@ -55,7 +55,6 @@ public class LibraryApp {
                     String isbn = input.nextLine();
 
                     bookService.addBook(title, author, isbn);
-                    System.out.println("✅ Book added successfully!");
                 }
 
                 case 3 -> {
