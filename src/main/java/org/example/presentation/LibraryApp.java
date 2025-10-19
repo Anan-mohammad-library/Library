@@ -2,7 +2,9 @@ package org.example.presentation;
 
 import org.example.service.AdminService;
 import org.example.service.BookService;
+import org.example.service.LoanService;
 import java.util.Scanner;
+
 public class LibraryApp {
 
     public static void main(String[] args) {
@@ -10,22 +12,27 @@ public class LibraryApp {
         Scanner input = new Scanner(System.in);
         AdminService adminService = new AdminService();
         BookService bookService   = new BookService();
+        LoanService loanService   = new LoanService();
 
         System.out.println("📚 Welcome to the Library Management System!");
+
         while (true) {
             System.out.println("\n========== MENU ==========");
             System.out.println("1. Login as Admin");
             System.out.println("2. Add a Book");
             System.out.println("3. Search for a Book");
-            System.out.println("4. Logout");
-            System.out.println("5. Exit");
+            System.out.println("4. Borrow a Book");
+            System.out.println("5. Check Overdue Books");
+            System.out.println("6. Pay Fine");
+            System.out.println("7. Logout");
+            System.out.println("8. Exit");
             System.out.print("Enter your choice: ");
 
             int choice;
             try {
                 choice = Integer.parseInt(input.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("⚠️ Please enter a number between 1–5.");
+                System.out.println("⚠️ Please enter a number between 1–8.");
                 continue;
             }
 
@@ -71,11 +78,29 @@ public class LibraryApp {
                 }
 
                 case 4 -> {
+                    System.out.print("Borrower name: ");
+                    String borrower = input.nextLine();
+                    System.out.print("Book title: ");
+                    String bookTitle = input.nextLine();
+                    loanService.borrowBook(borrower, bookTitle);
+                }
+
+                case 5 -> {
+                    loanService.checkOverdueBooks();
+                }
+
+                case 6 -> {
+                    System.out.print("Borrower name: ");
+                    String borrower = input.nextLine();
+                    loanService.payFine(borrower);
+                }
+
+                case 7 -> {
                     adminService.logout();
                     System.out.println("👋 Logged out successfully.");
                 }
 
-                case 5 -> {
+                case 8 -> {
                     System.out.println("👋 Exiting... Have a great day!");
                     return;
                 }
