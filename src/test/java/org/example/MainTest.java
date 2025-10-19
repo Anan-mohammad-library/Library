@@ -9,7 +9,7 @@ class AdminServiceTest {
     @Test
     void testLoginSuccess() {
         AdminService admin = new AdminService();
-        assertTrue(admin.login("admin", "1234"));
+        assertTrue(admin.login("anan", "1234"));
     }
 
     @Test

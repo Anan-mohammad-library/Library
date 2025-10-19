@@ -1,27 +1,41 @@
 package org.example.service;
 
 import org.example.domain.Admin;
+
 public class AdminService {
 
+    private final Admin[] admins = {
+            new Admin("anan", "1234"),
+            new Admin("mohammad", "123"),
 
-    private final Admin admin = new Admin("admin", "1234");
-
+    };
 
     private boolean loggedIn = false;
+    private Admin currentAdmin;
 
     public boolean login(String username, String password) {
-        boolean success = username.equals(admin.getUsername()) &&
-                password.equals(admin.getPassword());
-        loggedIn = success;
-        return success;
+        for (Admin admin : admins) {
+            if (admin.getUsername().equals(username) && admin.getPassword().equals(password)) {
+                loggedIn = true;
+                currentAdmin = admin;
+                return true;
+            }
+        }
+        loggedIn = false;
+        currentAdmin = null;
+        return false;
     }
-
 
     public void logout() {
         loggedIn = false;
+        currentAdmin = null;
     }
 
     public boolean isLoggedIn() {
         return loggedIn;
+    }
+
+    public Admin getCurrentAdmin() {
+        return currentAdmin;
     }
 }
