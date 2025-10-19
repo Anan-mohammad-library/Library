@@ -3,63 +3,85 @@ package org.example.presentation;
 import org.example.service.AdminService;
 import org.example.service.BookService;
 import java.util.Scanner;
-
 public class LibraryApp {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        AdminService adminService = new AdminService();
-        BookService bookService = new BookService();
 
+    public static void main(String[] args) {
+
+        Scanner input = new Scanner(System.in);
+        AdminService adminService = new AdminService();
+        BookService bookService   = new BookService();
+
+        System.out.println("📚 Welcome to the Library Management System!");
         while (true) {
-            System.out.println("\n=== Library System ===");
-            System.out.println("1. Login");
-            System.out.println("2. Add Book");
-            System.out.println("3. Search Book");
+            System.out.println("\n========== MENU ==========");
+            System.out.println("1. Login as Admin");
+            System.out.println("2. Add a Book");
+            System.out.println("3. Search for a Book");
             System.out.println("4. Logout");
             System.out.println("5. Exit");
-            System.out.print("Choose: ");
-            int choice = sc.nextInt();
-            sc.nextLine();
+            System.out.print("Enter your choice: ");
+
+            int choice;
+            try {
+                choice = Integer.parseInt(input.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("⚠️ Please enter a number between 1–5.");
+                continue;
+            }
 
             switch (choice) {
                 case 1 -> {
                     System.out.print("Username: ");
-                    String u = sc.nextLine();
+                    String user = input.nextLine();
                     System.out.print("Password: ");
-                    String p = sc.nextLine();
-                    if (adminService.login(u, p))
-                        System.out.println("✅ Login successful!");
+                    String pass = input.nextLine();
+
+                    if (adminService.login(user, pass))
+                        System.out.println("✅ Logged in successfully!");
                     else
-                        System.out.println("❌ Invalid credentials!");
+                        System.out.println("❌ Invalid username or password!");
                 }
+
                 case 2 -> {
                     if (!adminService.isLoggedIn()) {
-                        System.out.println("⚠️ Please login first!");
+                        System.out.println("🔒 Please log in first!");
                         break;
                     }
-                    System.out.print("Title: ");
-                    String t = sc.nextLine();
+                    System.out.print("Book title: ");
+                    String title = input.nextLine();
                     System.out.print("Author: ");
-                    String a = sc.nextLine();
+                    String author = input.nextLine();
                     System.out.print("ISBN: ");
-                    String i = sc.nextLine();
-                    bookService.addBook(t, a, i);
-                    System.out.println("✅ Book added!");
+                    String isbn = input.nextLine();
+
+                    bookService.addBook(title, author, isbn);
+                    System.out.println("✅ Book added successfully!");
                 }
+
                 case 3 -> {
-                    System.out.print("Keyword: ");
-                    String k = sc.nextLine();
-                    bookService.search(k).forEach(System.out::println);
+                    System.out.print("Search keyword: ");
+                    String keyword = input.nextLine();
+                    var results = bookService.search(keyword);
+
+                    if (results.isEmpty())
+                        System.out.println("📭 No matching books found.");
+                    else {
+                        System.out.println("📖 Search results:");
+                        results.forEach(System.out::println);
+                    }
                 }
+
                 case 4 -> {
                     adminService.logout();
-                    System.out.println("✅ Logged out!");
+                    System.out.println("👋 Logged out successfully.");
                 }
+
                 case 5 -> {
-                    System.out.println("👋 Goodbye!");
+                    System.out.println("👋 Exiting... Have a great day!");
                     return;
                 }
-                default -> System.out.println("Invalid choice!");
+
+                default -> System.out.println("⚠️ Invalid option. Try again!");
             }
         }
     }

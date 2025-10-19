@@ -1,22 +1,24 @@
 package org.example.domain;
 
+
 public class Book {
-    private String title;
-    private String author;
-    private String isbn;
+
+    private final String title;
+    private final String author;
+    private final String isbn;
 
     public Book(String title, String author, String isbn) {
-        this.title = title;
+        this.title  = title;
         this.author = author;
-        this.isbn = isbn;
+        this.isbn   = isbn;
     }
 
-    public String getTitle() { return title; }
+    public String getTitle()  { return title;  }
     public String getAuthor() { return author; }
-    public String getIsbn() { return isbn; }
+    public String getIsbn()   { return isbn;   }
 
     @Override
     public String toString() {
-        return String.format("%s by %s (ISBN: %s)", title, author, isbn);
+        return String.format("%s — %s (ISBN: %s)", title, author, isbn);
     }
 }
