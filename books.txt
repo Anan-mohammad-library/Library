@@ -1,4 +1,0 @@
-asdfg|anan|123
-Ammms|ahmad|223
-Java Basics|John Doe|12345
-Java Basics|John Doe|12345

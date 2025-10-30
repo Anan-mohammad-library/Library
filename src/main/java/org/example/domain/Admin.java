@@ -1,11 +1,13 @@
 package org.example.domain;
 
+import java.io.Serializable;
 
-public class Admin {
+public class Admin implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String username;
     private final String password;
-
 
     public Admin(String username, String password) {
         this.username = username;

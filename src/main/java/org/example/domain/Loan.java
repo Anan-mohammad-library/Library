@@ -5,10 +5,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-/**
- * Represents a loan of a book by a borrower.
- * Only allows borrowing books that already exist in books.txt.
- */
+
 public class Loan implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -19,9 +16,7 @@ public class Loan implements Serializable {
     private boolean returned;
     private double fine;
 
-    // =====================================================
-    // ✅ Constructor for NEW loans (validates book existence)
-    // =====================================================
+
     public Loan(String borrower, String bookTitle) {
         if (!isBookAvailable(bookTitle)) {
             throw new IllegalArgumentException("❌ The book \"" + bookTitle + "\" does not exist in the library file.");
@@ -35,9 +30,7 @@ public class Loan implements Serializable {
         this.fine = 0;
     }
 
-    // =====================================================
-    // ✅ Constructor for LOADED loans (no validation)
-    // =====================================================
+
     public Loan(String borrower, String bookTitle, String borrowDate, String dueDate, boolean returned, double fine) {
         this.borrower = borrower;
         this.bookTitle = bookTitle;
@@ -47,17 +40,12 @@ public class Loan implements Serializable {
         this.fine = fine;
     }
 
-    // =====================================================
-    // ✅ Check if book exists in books file
-    // =====================================================
+
     private boolean isBookAvailable(String title) {
         List<Book> books = Book.loadBooksFromFile();
         return books.stream().anyMatch(b -> b.getTitle().equalsIgnoreCase(title));
     }
 
-    // =====================================================
-    // ✅ Check overdue and calculate fine
-    // =====================================================
     public void checkOverdue() {
         if (!returned && LocalDate.now().isAfter(dueDate)) {
             long daysLate = ChronoUnit.DAYS.between(dueDate, LocalDate.now());
@@ -75,9 +63,6 @@ public class Loan implements Serializable {
         fine = 0;
     }
 
-    // =====================================================
-    // ✅ Getters
-    // =====================================================
     public String getBorrower() {
         return borrower;
     }
@@ -102,9 +87,6 @@ public class Loan implements Serializable {
         return fine;
     }
 
-    // =====================================================
-    // ✅ toString
-    // =====================================================
     @Override
     public String toString() {
         return String.format("Book: %s | Borrower: %s | Due: %s | Returned: %s | Fine: %.2f",
