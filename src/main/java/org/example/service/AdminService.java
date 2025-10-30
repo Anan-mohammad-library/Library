@@ -20,7 +20,7 @@ public class AdminService {
         if (admins.isEmpty()) {
             admins.add(new Admin("anan", "1234"));
             admins.add(new Admin("mohammad", "123"));
-            saveAdmins(); // حفظهم فوراً
+            saveAdmins();
         }
     }
 

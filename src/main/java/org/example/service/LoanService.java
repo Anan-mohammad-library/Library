@@ -19,7 +19,7 @@ public class LoanService {
         Loan loan = new Loan(borrower, bookTitle);
         loans.add(loan);
         saveLoans();
-        System.out.println("✅ " + borrower + " borrowed \"" + bookTitle + "\" until " + loan.getDueDate());
+        System.out.println(  borrower + " borrowed \"" + bookTitle + "\" until " + loan.getDueDate());
     }
 
     public void checkOverdueBooks() {
@@ -27,12 +27,12 @@ public class LoanService {
         for (Loan loan : loans) {
             loan.checkOverdue();
             if (loan.getFine() > 0) {
-                System.out.println("⚠️ Overdue: " + loan);
+                System.out.println(" Overdue: " + loan);
                 found = true;
             }
         }
         if (!found)
-            System.out.println("✅ No overdue books.");
+            System.out.println(" No overdue books.");
     }
 
     public void payFine(String borrower) {
@@ -41,16 +41,15 @@ public class LoanService {
             if (loan.getBorrower().equalsIgnoreCase(borrower) && loan.getFine() > 0) {
                 loan.payFine();
                 loan.markReturned();
-                System.out.println("💰 Fine paid successfully for " + borrower);
+                System.out.println(" Fine paid successfully for " + borrower);
                 paid = true;
             }
         }
         if (!paid)
-            System.out.println("ℹ️ No fines to pay for " + borrower);
+            System.out.println("ℹ No fines to pay for " + borrower);
         saveLoans();
     }
 
-    // ================= File Save/Load =================
     private void saveLoans() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Loan loan : loans) {

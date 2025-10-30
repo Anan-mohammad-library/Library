@@ -1,6 +1,4 @@
 package org.example;
-
-
 import org.example.domain.Book;
 import org.example.service.BookService;
 import org.junit.jupiter.api.*;
@@ -17,7 +15,6 @@ class BookServiceTest {
 
     @BeforeEach
     void setup() {
-        // Delete the file before each test to start fresh
         File file = new File(FILE_PATH);
         if (file.exists()) file.delete();
 
@@ -29,7 +26,7 @@ class BookServiceTest {
         service.addBook("Java Basics", "John Doe", "12345");
         List<Book> result = service.search("Java Basics");
 
-        assertFalse(result.isEmpty(), "Book should be found after adding");
+        assertFalse(result.isEmpty());
         assertEquals("Java Basics", result.get(0).getTitle());
         assertEquals("John Doe", result.get(0).getAuthor());
         assertEquals("12345", result.get(0).getIsbn());
@@ -62,14 +59,14 @@ class BookServiceTest {
     @Test
     void testSearchNotFound() {
         List<Book> result = service.search("Unknown Title");
-        assertTrue(result.isEmpty(), "No books should match this keyword");
+        assertTrue(result.isEmpty());
     }
 
     @Test
     void testCaseInsensitiveSearch() {
         service.addBook("Spring Framework", "Rod Johnson", "555");
         List<Book> result = service.search("spring");
-        assertEquals(1, result.size(), "Search should be case-insensitive");
+        assertEquals(1, result.size());
     }
 
     @Test
@@ -78,7 +75,7 @@ class BookServiceTest {
         service.addBook("Java Advanced", "Bob", "102");
 
         List<Book> result = service.search("Java");
-        assertEquals(2, result.size(), "Should return both books matching keyword 'Java'");
+        assertEquals(2, result.size());
     }
 
     @Test
@@ -86,17 +83,16 @@ class BookServiceTest {
         service.addBook("Persistence Test", "Author X", "999");
         BookService newService = new BookService();
         List<Book> result = newService.search("Persistence Test");
-        assertEquals(1, result.size(), "Book should be loaded from file in new service instance");
+        assertEquals(1, result.size());
     }
 
     @Test
     void testAddDuplicateIsbn() {
         service.addBook("Book A", "Author A", "123");
-        service.addBook("Book B", "Author B", "123"); // duplicate ISBN
+        service.addBook("Book B", "Author B", "123");
 
-        // Should allow adding duplicates with current implementation, but you could prevent it:
         List<Book> result = service.search("123");
-        assertEquals(2, result.size(), "Duplicate ISBNs currently allowed, returns both");
+        assertEquals(2, result.size());
     }
 }
 

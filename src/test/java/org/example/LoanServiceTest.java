@@ -1,5 +1,4 @@
 package org.example;
-
 import org.example.domain.Loan;
 import org.junit.jupiter.api.*;
 import java.io.*;
@@ -13,7 +12,6 @@ class LoanTest {
 
     @BeforeEach
     void setup() throws IOException {
-        // Prepare test book
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             writer.write("Test Book|Author X|123");
             writer.newLine();
@@ -62,7 +60,7 @@ class LoanTest {
                 false, 0);
 
         loan.checkOverdue();
-        assertEquals(2, loan.getFine(), "Fine should be 2 NIS (days late)");
+        assertEquals(2, loan.getFine());
     }
 
     @Test
@@ -111,10 +109,9 @@ class LoanTest {
                 LocalDate.now().minusDays(30).toString(),
                 LocalDate.now().minusDays(2).toString(),
                 false, 0);
-
         loan.markReturned();
         loan.checkOverdue();
-        assertEquals(0, loan.getFine(), "Returned book should not accumulate fine");
+        assertEquals(0, loan.getFine());
     }
 
     @Test
@@ -125,7 +122,7 @@ class LoanTest {
                 false, 0);
 
         loan.checkOverdue();
-        assertEquals(7, loan.getFine(), "Fine should equal 7 NIS (days late)");
+        assertEquals(7, loan.getFine());
     }
 
     @Test
@@ -138,8 +135,8 @@ class LoanTest {
         loan.checkOverdue();
         double fineBefore = loan.getFine();
         loan.payFine();
-        assertEquals(0, loan.getFine(), "Fine should be cleared after paying");
-        assertTrue(fineBefore > 0, "Fine should have existed before payment");
+        assertEquals(0, loan.getFine());
+        assertTrue(fineBefore > 0);
     }
 
     @Test

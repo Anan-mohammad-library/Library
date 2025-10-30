@@ -56,40 +56,48 @@ public class Loan implements Serializable {
     }
 
     public void markReturned() {
+
         this.returned = true;
     }
 
     public void payFine() {
+
         fine = 0;
     }
 
     public String getBorrower() {
+
         return borrower;
     }
 
     public String getBookTitle() {
+
         return bookTitle;
     }
 
     public LocalDate getBorrowDate() {
+
         return borrowDate;
     }
 
     public LocalDate getDueDate() {
+
         return dueDate;
     }
 
     public boolean isReturned() {
+
         return returned;
     }
 
     public double getFine() {
+
         return fine;
     }
 
     @Override
     public String toString() {
-        return String.format("Book: %s | Borrower: %s | Due: %s | Returned: %s | Fine: %.2f",
+        return String.format("Book: %s | Borrower: %s | Due: %s | Returned: %s | Fine: %f",
                 bookTitle, borrower, dueDate, returned, fine);
     }
 }

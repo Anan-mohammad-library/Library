@@ -19,11 +19,21 @@ public class Book implements Serializable {
         this.isbn = isbn;
     }
 
-    public String getTitle() { return title; }
-    public String getAuthor() { return author; }
-    public String getIsbn() { return isbn; }
-    public boolean isAvailable() { return available; }
-    public void setAvailable(boolean available) { this.available = available; }
+    public String getTitle() {
+        return title;
+    }
+    public String getAuthor() {
+        return author;
+    }
+    public String getIsbn() {
+        return isbn;
+    }
+    //public boolean isAvailable() {
+       // return available;
+    //}
+   // public void setAvailable(boolean available) {
+      //  this.available = available;
+   // }
 
     @Override
     public String toString() {
@@ -45,7 +55,7 @@ public class Book implements Serializable {
                 }
             }
         } catch (IOException e) {
-            System.out.println("❌ Error reading books.txt file: " + e.getMessage());
+            System.out.println(" Error reading books.txt file: " + e.getMessage());
         }
         return books;
     }
@@ -57,7 +67,7 @@ public class Book implements Serializable {
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.out.println("❌ Error writing to books.txt file: " + e.getMessage());
+            System.out.println(" Error writing to books.txt file: " + e.getMessage());
         }
     }
 

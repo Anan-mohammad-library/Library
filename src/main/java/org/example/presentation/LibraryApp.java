@@ -14,7 +14,7 @@ public class LibraryApp {
         BookService bookService   = new BookService();
         LoanService loanService   = new LoanService();
 
-        System.out.println("📚 Welcome to the Library Management System!");
+        System.out.println(" Welcome to the Library Management System!");
 
         while (true) {
             System.out.println("\n========== MENU ==========");
@@ -32,7 +32,7 @@ public class LibraryApp {
             try {
                 choice = Integer.parseInt(input.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("⚠️ Please enter a number between 1–8.");
+                System.out.println(" Please enter a number between 1–8.");
                 continue;
             }
 
@@ -51,7 +51,7 @@ public class LibraryApp {
 
                 case 2 -> {
                     if (!adminService.isLoggedIn()) {
-                        System.out.println("🔒 Please log in first!");
+                        System.out.println(" Please log in first!");
                         break;
                     }
                     System.out.print("Book title: ");
@@ -70,9 +70,9 @@ public class LibraryApp {
                     var results = bookService.search(keyword);
 
                     if (results.isEmpty())
-                        System.out.println("📭 No matching books found.");
+                        System.out.println(" No matching books found.");
                     else {
-                        System.out.println("📖 Search results:");
+                        System.out.println(" Search results:");
                         results.forEach(System.out::println);
                     }
                 }
@@ -97,15 +97,15 @@ public class LibraryApp {
 
                 case 7 -> {
                     adminService.logout();
-                    System.out.println("👋 Logged out successfully.");
+                    System.out.println(" Logged out successfully.");
                 }
 
                 case 8 -> {
-                    System.out.println("👋 Exiting... Have a great day!");
+                    System.out.println(" Exiting... Have a great day!");
                     return;
                 }
 
-                default -> System.out.println("⚠️ Invalid option. Try again!");
+                default -> System.out.println(" Invalid option. Try again!");
             }
         }
     }

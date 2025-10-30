@@ -1,6 +1,4 @@
 package org.example;
-
-import org.example.domain.Admin;
 import org.example.service.AdminService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,18 +17,18 @@ class AdminServiceTest {
 
     @Test
     void testLoginSuccess() {
-        assertTrue(adminService.login("anan", "1234"), "Login should succeed with valid credentials");
-        assertTrue(adminService.isLoggedIn(), "Admin should be marked as logged in");
-        assertNotNull(adminService.getCurrentAdmin(), "Current admin should not be null after successful login");
+        assertTrue(adminService.login("anan", "1234"));
+        assertTrue(adminService.isLoggedIn());
+        assertNotNull(adminService.getCurrentAdmin());
         assertEquals("anan", adminService.getCurrentAdmin().getUsername());
     }
 
 
     @Test
     void testLoginFailure() {
-        assertFalse(adminService.login("wrong", "user"), "Login should fail for invalid credentials");
-        assertFalse(adminService.isLoggedIn(), "System should not mark admin as logged in");
-        assertNull(adminService.getCurrentAdmin(), "Current admin should be null after failed login");
+        assertFalse(adminService.login("wrong", "user"));
+        assertFalse(adminService.isLoggedIn());
+        assertNull(adminService.getCurrentAdmin());
     }
 
 
@@ -39,10 +37,9 @@ class AdminServiceTest {
         adminService.login("anan", "1234");
         adminService.logout();
 
-        assertFalse(adminService.isLoggedIn(), "Admin should not be logged in after logout");
-        assertNull(adminService.getCurrentAdmin(), "Current admin should be null after logout");
+        assertFalse(adminService.isLoggedIn());
+        assertNull(adminService.getCurrentAdmin());
     }
-
 
     @Test
     void testLoginSwitchBetweenAdmins() {
@@ -64,14 +61,14 @@ class AdminServiceTest {
 
     @Test
     void testLoginWithNullValues() {
-        assertFalse(adminService.login(null, null), "Login should fail if credentials are null");
+        assertFalse(adminService.login(null, null));
         assertFalse(adminService.isLoggedIn());
     }
 
 
     @Test
     void testLoginWithEmptyStrings() {
-        assertFalse(adminService.login("", ""), "Login should fail if credentials are empty");
+        assertFalse(adminService.login("", ""));
         assertFalse(adminService.isLoggedIn());
     }
 
@@ -79,21 +76,21 @@ class AdminServiceTest {
     @Test
     void testAddNewAdminAndLogin() {
         adminService.addAdmin("newadmin", "pass");
-        assertTrue(adminService.login("newadmin", "pass"), "Should login successfully with newly added admin");
+        assertTrue(adminService.login("newadmin", "pass"));
     }
 
 
     @Test
     void testGetAdminsNotEmpty() {
-        assertNotNull(adminService.getAdmins(), "Admin list should not be null");
-        assertFalse(adminService.getAdmins().isEmpty(), "Admin list should contain default admins");
+        assertNotNull(adminService.getAdmins());
+        assertFalse(adminService.getAdmins().isEmpty());
     }
 
     @Test
     void testMultipleFailedLogins() {
         adminService.login("wrong1", "123");
         adminService.login("wrong2", "abc");
-        assertFalse(adminService.isLoggedIn(), "Should not stay logged in after multiple failures");
+        assertFalse(adminService.isLoggedIn());
         assertNull(adminService.getCurrentAdmin());
     }
 }
