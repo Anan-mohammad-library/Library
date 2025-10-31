@@ -1,3 +1,1 @@
-ali|res|2025-10-19|2025-11-16|false|0.0
-ameed|asdfg|2025-10-19|2025-11-16|false|0.0
-ahmad|asdfg|2025-10-19|2025-11-16|false|0.0
+sam|Some Book|2025-09-21|2025-10-21|false|10.0

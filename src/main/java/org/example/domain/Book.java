@@ -28,12 +28,12 @@ public class Book implements Serializable {
     public String getIsbn() {
         return isbn;
     }
-    //public boolean isAvailable() {
-       // return available;
-    //}
-   // public void setAvailable(boolean available) {
-      //  this.available = available;
-   // }
+    public boolean isAvailable() {
+       return available;
+    }
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
 
     @Override
     public String toString() {

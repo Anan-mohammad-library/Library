@@ -15,24 +15,62 @@ public class LoanService {
         loans = loadLoans();
     }
 
+
+    public void refreshOverdues() {
+        for (Loan loan : loans) {
+            loan.checkOverdue();
+        }
+        saveLoans();
+    }
+
+
+    public boolean hasBlocks(String borrower) {
+        refreshOverdues();
+        for (Loan l : loans) {
+            if (l.getBorrower().equalsIgnoreCase(borrower)) {
+                if (!l.isReturned() && l.getFine() > 0) return true;
+                if (l.getFine() > 0) return true;
+            }
+        }
+        return false;
+    }
+
+    public List<Loan> getAllLoans() {
+        return loans;
+    }
+
+    public List<Loan> getLoansByBorrower(String borrower) {
+        List<Loan> out = new ArrayList<>();
+        for (Loan l : loans) {
+            if (l.getBorrower().equalsIgnoreCase(borrower)) out.add(l);
+        }
+        return out;
+    }
+
+
     public void borrowBook(String borrower, String bookTitle) {
+        if (hasBlocks(borrower)) {
+            System.out.println("❌ Borrow blocked: user has overdue books or unpaid fines.");
+            return;
+        }
         Loan loan = new Loan(borrower, bookTitle);
         loans.add(loan);
         saveLoans();
-        System.out.println(  borrower + " borrowed \"" + bookTitle + "\" until " + loan.getDueDate());
+        System.out.println(borrower + " borrowed \"" + bookTitle + "\" until " + loan.getDueDate());
     }
 
     public void checkOverdueBooks() {
         boolean found = false;
         for (Loan loan : loans) {
             loan.checkOverdue();
-            if (loan.getFine() > 0) {
+            if (loan.getFine() > 0 && !loan.isReturned()) {
                 System.out.println(" Overdue: " + loan);
                 found = true;
             }
         }
         if (!found)
             System.out.println(" No overdue books.");
+        saveLoans();
     }
 
     public void payFine(String borrower) {
@@ -40,8 +78,9 @@ public class LoanService {
         for (Loan loan : loans) {
             if (loan.getBorrower().equalsIgnoreCase(borrower) && loan.getFine() > 0) {
                 loan.payFine();
+
                 loan.markReturned();
-                System.out.println(" Fine paid successfully for " + borrower);
+                System.out.println(" Fine paid successfully for " + borrower + " on loan: " + loan.getBookTitle());
                 paid = true;
             }
         }
