@@ -43,14 +43,17 @@ public class AdminService {
     }
 
     public boolean isLoggedIn() {
+
         return loggedIn;
     }
 
     public Admin getCurrentAdmin() {
+
         return currentAdmin;
     }
 
     public List<Admin> getAdmins() {
+
         return admins;
     }
 

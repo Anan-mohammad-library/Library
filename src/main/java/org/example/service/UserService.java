@@ -25,7 +25,7 @@ public class UserService {
 
     public void unregister(String username, AdminService adminService, LoanService loanService) {
         if (!adminService.isLoggedIn()) {
-            System.out.println("❌ Only admins can unregister users.");
+            System.out.println(" Only admins can unregister users.");
             return;
         }
 
@@ -33,13 +33,13 @@ public class UserService {
         boolean blocked = loanService.getLoansByBorrower(username).stream()
                 .anyMatch(l -> !l.isReturned() || l.getFine() > 0);
         if (blocked) {
-            System.out.println("❌ Cannot unregister: user has active loans or unpaid fines.");
+            System.out.println(" Cannot unregister: user has active loans or unpaid fines.");
             return;
         }
 
         if (users.remove(username.toLowerCase())) {
             save();
-            System.out.println("✅ User unregistered: " + username);
+            System.out.println(" User unregistered: " + username);
         } else {
             System.out.println("ℹ User not found: " + username);
         }

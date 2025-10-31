@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.domain.Loan;
+import org.example.domain.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,17 +9,31 @@ import java.util.List;
 public class LoanService {
 
     private static final String FILE_PATH = "loans.txt";
-    private List<Loan> loans;
+    private final List<Loan> loans;
 
     public LoanService() {
         loans = loadLoans();
     }
 
 
-    public void refreshOverdues() {
+    public List<Loan> getAllLoans() {
+        return loans;
+    }
+
+
+    public List<Loan> getLoansByBorrower(String borrower) {
+        List<Loan> result = new ArrayList<>();
         for (Loan loan : loans) {
-            loan.checkOverdue();
+            if (loan.getBorrower().equalsIgnoreCase(borrower)) {
+                result.add(loan);
+            }
         }
+        return result;
+    }
+
+
+    public void refreshOverdues() {
+        for (Loan loan : loans) loan.checkOverdue();
         saveLoans();
     }
 
@@ -27,80 +41,102 @@ public class LoanService {
     public boolean hasBlocks(String borrower) {
         refreshOverdues();
         for (Loan l : loans) {
-            if (l.getBorrower().equalsIgnoreCase(borrower)) {
-                if (!l.isReturned() && l.getFine() > 0) return true;
-                if (l.getFine() > 0) return true;
+            if (l.getBorrower().equalsIgnoreCase(borrower)
+                    && !l.isReturned()
+                    && l.getFine() > 0) {
+                return true;
             }
         }
         return false;
     }
 
-    public List<Loan> getAllLoans() {
-        return loans;
-    }
-
-    public List<Loan> getLoansByBorrower(String borrower) {
-        List<Loan> out = new ArrayList<>();
-        for (Loan l : loans) {
-            if (l.getBorrower().equalsIgnoreCase(borrower)) out.add(l);
-        }
-        return out;
-    }
-
 
     public void borrowBook(String borrower, String bookTitle) {
         if (hasBlocks(borrower)) {
-            System.out.println("❌ Borrow blocked: user has overdue books or unpaid fines.");
+            System.out.println("❌ Borrow blocked: user has overdue or unpaid fines.");
             return;
         }
-        Loan loan = new Loan(borrower, bookTitle);
+
+        Book book = Book.findBookByTitle(bookTitle);
+        if (book == null) {
+            System.out.println("❌ Book not found: " + bookTitle);
+            return;
+        }
+
+        Loan loan = new Loan(borrower, book);
         loans.add(loan);
         saveLoans();
-        System.out.println(borrower + " borrowed \"" + bookTitle + "\" until " + loan.getDueDate());
+        System.out.println("✅ " + borrower + " borrowed book \"" + bookTitle + "\" until " + loan.getDueDate());
     }
 
-    public void checkOverdueBooks() {
+
+    public void borrowCD(String borrower, String cdTitle) {
+        if (hasBlocks(borrower)) {
+            System.out.println("❌ Borrow blocked: user has overdue or unpaid fines.");
+            return;
+        }
+
+        CD cd = CD.findCDByTitle(cdTitle);
+        if (cd == null) {
+            System.out.println("❌ CD not found: " + cdTitle);
+            return;
+        }
+
+        Loan loan = new Loan(borrower, cd);
+        loans.add(loan);
+        saveLoans();
+        System.out.println("✅ " + borrower + " borrowed CD \"" + cdTitle + "\" until " + loan.getDueDate());
+    }
+
+
+    public void checkOverdueMedia() {
         boolean found = false;
         for (Loan loan : loans) {
             loan.checkOverdue();
             if (loan.getFine() > 0 && !loan.isReturned()) {
-                System.out.println(" Overdue: " + loan);
+                System.out.println("⚠ Overdue: " + loan);
                 found = true;
             }
         }
-        if (!found)
-            System.out.println(" No overdue books.");
+        if (!found) System.out.println("✅ No overdue media found.");
         saveLoans();
     }
+
 
     public void payFine(String borrower) {
         boolean paid = false;
         for (Loan loan : loans) {
             if (loan.getBorrower().equalsIgnoreCase(borrower) && loan.getFine() > 0) {
                 loan.payFine();
-
                 loan.markReturned();
-                System.out.println(" Fine paid successfully for " + borrower + " on loan: " + loan.getBookTitle());
+                System.out.println("✅ Fine paid for " + borrower + " on: " + loan.getMedia().getTitle());
                 paid = true;
             }
         }
-        if (!paid)
-            System.out.println("ℹ No fines to pay for " + borrower);
+        if (!paid) System.out.println("ℹ No fines to pay for " + borrower);
         saveLoans();
     }
+
 
     private void saveLoans() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Loan loan : loans) {
-                writer.write(loan.getBorrower() + "|" + loan.getBookTitle() + "|" +
-                        loan.getBorrowDate() + "|" + loan.getDueDate() + "|" +
-                        loan.isReturned() + "|" + loan.getFine());
+                writer.write(
+                        loan.getBorrower() + "|" +
+                                loan.getMedia().getTitle() + "|" +
+                                loan.getBorrowDate() + "|" +
+                                loan.getDueDate() + "|" +
+                                loan.isReturned() + "|" +
+                                loan.getFine() + "|" +
+                                loan.getMedia().getClass().getSimpleName()
+                );
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(" Error saving loans: " + e.getMessage());
         }
     }
+
 
     private List<Loan> loadLoans() {
         List<Loan> list = new ArrayList<>();
@@ -111,16 +147,21 @@ public class LoanService {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
-                if (parts.length >= 6) {
-                    Loan loan = new Loan(parts[0], parts[1], parts[2], parts[3],
-                            Boolean.parseBoolean(parts[4]),
-                            Double.parseDouble(parts[5]));
+                if (parts.length >= 7) {
+                    String borrower = parts[0].trim();
+                    String title = parts[1].trim();
+                    String type = parts[6].trim();
 
+                    Media media = type.equalsIgnoreCase("CD")
+                            ? new CD(title, "Unknown", "N/A")
+                            : new Book(title, "Unknown", "N/A");
+
+                    Loan loan = new Loan(borrower, media);
                     list.add(loan);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(" Error loading loans: " + e.getMessage());
         }
         return list;
     }

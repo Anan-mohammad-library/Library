@@ -4,42 +4,39 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Book implements Serializable {
+public class Book extends Media {
     private static final long serialVersionUID = 1L;
     private static final String FILE_PATH = "books.txt";
 
-    private String title;
     private String author;
     private String isbn;
-    private boolean available = true;
 
     public Book(String title, String author, String isbn) {
-        this.title = title;
+        super(title);
         this.author = author;
         this.isbn = isbn;
     }
 
-    public String getTitle() {
-        return title;
-    }
     public String getAuthor() {
         return author;
     }
     public String getIsbn() {
         return isbn;
     }
-    public boolean isAvailable() {
-       return available;
+
+    @Override
+    public int getLoanDays() {
+        return 28;
     }
-    public void setAvailable(boolean available) {
-        this.available = available;
+    @Override
+    public double calculateFine(long overdueDays) {
+        return overdueDays * 10;
     }
 
     @Override
     public String toString() {
-        return title + " by " + author + " (ISBN: " + isbn + ")";
+        return "Book: " + title + " by " + author + " (ISBN: " + isbn + ")";
     }
-
 
     public static List<Book> loadBooksFromFile() {
         List<Book> books = new ArrayList<>();
@@ -55,7 +52,7 @@ public class Book implements Serializable {
                 }
             }
         } catch (IOException e) {
-            System.out.println(" Error reading books.txt file: " + e.getMessage());
+            System.out.println("Error reading books.txt: " + e.getMessage());
         }
         return books;
     }
@@ -63,18 +60,17 @@ public class Book implements Serializable {
     public static void saveBooksToFile(List<Book> books) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Book b : books) {
-                writer.write(b.getTitle() + " | " + b.getAuthor() + " | " + b.getIsbn());
+                writer.write(b.getTitle() + "|" + b.getAuthor() + "|" + b.getIsbn());
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.out.println(" Error writing to books.txt file: " + e.getMessage());
+            System.out.println("Error writing to books.txt: " + e.getMessage());
         }
     }
 
     public static Book findBookByTitle(String title) {
         return loadBooksFromFile().stream()
                 .filter(b -> b.getTitle().equalsIgnoreCase(title))
-                .findFirst()
-                .orElse(null);
+                .findFirst().orElse(null);
     }
 }
