@@ -1,101 +1,156 @@
 package org.example;
 
-import org.example.domain.*;
+import org.example.domain.Loan;
 import org.junit.jupiter.api.*;
+import java.io.*;
 import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class LoanTest {
 
-    private Book sampleBook;
-    private CD sampleCD;
+    private static final String FILE_PATH = "books.txt";
 
     @BeforeEach
-    void setup() {
-        sampleBook = new Book("Test Book", "Author X", "123");
-        sampleCD = new CD("Test CD", "Artist Y", "CD001");
+    void setup() throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            writer.write("Test Book|Author X|123");
+            writer.newLine();
+        }
+    }
+
+    @AfterEach
+    void cleanup() {
+        File file = new File(FILE_PATH);
+        if (file.exists()) file.delete();
     }
 
     @Test
-    void testCreateBookLoanSetsDatesCorrectly() {
-        Loan loan = new Loan("User1", sampleBook);
+    void testCreateLoanSetsDatesCorrectly() {
+        Loan loan = new Loan("User1", "Test Book", "BOOK");
+
         assertEquals("User1", loan.getBorrower());
-        assertEquals(sampleBook, loan.getMedia());
+        assertEquals("Test Book", loan.getItemTitle());
         assertEquals(LocalDate.now(), loan.getBorrowDate());
-        assertEquals(LocalDate.now().plusDays(28), loan.getDueDate());
+        assertEquals(LocalDate.now().plusDays(28), loan.getDueDate()); // BOOK = 28 days
         assertFalse(loan.isReturned());
+        assertEquals(0, loan.getFine());
+        assertEquals("BOOK", loan.getMediaType());
+    }
+
+    @Test
+    void testLoanThrowsForNonexistentBook() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Loan("User1", "Nonexistent Book"); // ✅ استخدم constructor الخاص بالكتب
+        });
+    }
+
+
+    @Test
+    void testCheckOverdueNoFineBeforeDueDate() {
+        Loan loan = new Loan("User1", "Test Book", "BOOK");
+        loan.checkOverdue();
         assertEquals(0, loan.getFine());
     }
 
     @Test
-    void testCreateCDLoanSetsShorterDuration() {
-        Loan loan = new Loan("User2", sampleCD);
-        assertEquals(LocalDate.now().plusDays(7), loan.getDueDate());
-    }
+    void testCheckOverdueAfterDueDateForBook() {
+        Loan loan = new Loan("User1", "Test Book", "BOOK",
+                LocalDate.now().minusDays(30).toString(),
+                LocalDate.now().minusDays(2).toString(),
+                false, 0);
 
-    @Test
-    void testBookFineCalculationAfterDueDate() {
-        Loan loan = new Loan("User3", sampleBook);
-        // نحاكي تأخير 3 أيام بعد due date
-        loan.getMedia().setAvailable(false);
         loan.checkOverdue();
-        assertTrue(loan.getFine() >= 0);
+        assertEquals(2, loan.getFine()); // BOOK = 1/day
     }
 
     @Test
-    void testCDFineIsHigherThanBookFine() {
-        Loan bookLoan = new Loan("User4", sampleBook);
-        Loan cdLoan = new Loan("User4", sampleCD);
-
-        bookLoan.checkOverdue();
-        cdLoan.checkOverdue();
-
-        // الغرامة اليومية للـ CD أعلى
-        assertTrue(cdLoan.getFine() >= bookLoan.getFine());
-    }
-
-    @Test
-    void testMarkReturnedWorksProperly() {
-        Loan loan = new Loan("User5", sampleBook);
+    void testMarkReturnedResetsReturnedFlag() {
+        Loan loan = new Loan("User1", "Test Book", "BOOK");
         loan.markReturned();
         assertTrue(loan.isReturned());
     }
 
     @Test
     void testPayFineResetsFineToZero() {
-        Loan loan = new Loan("User6", sampleBook);
+        Loan loan = new Loan("User1", "Test Book", "BOOK",
+                LocalDate.now().minusDays(30).toString(),
+                LocalDate.now().minusDays(2).toString(),
+                false, 0);
+
         loan.checkOverdue();
+        assertTrue(loan.getFine() > 0);
         loan.payFine();
         assertEquals(0, loan.getFine());
     }
 
     @Test
-    void testToStringContainsAllInformation() {
-        Loan loan = new Loan("User7", sampleBook);
+    void testToStringContainsAllInfo() {
+        Loan loan = new Loan("User1", "Test Book", "BOOK");
         String str = loan.toString();
-        assertTrue(str.contains("User7"));
-        assertTrue(str.contains("Book"));
+        assertTrue(str.contains("Test Book"));
+        assertTrue(str.contains("User1"));
+        assertTrue(str.contains("Due"));
+        assertTrue(str.contains("Returned"));
         assertTrue(str.contains("Fine"));
     }
 
     @Test
-    void testReturnedBookHasNoFineEvenIfOverdue() {
-        Loan loan = new Loan("User8", sampleBook);
+    void testMultipleLoansSameUser() {
+        Loan loan1 = new Loan("User1", "Test Book", "BOOK");
+        Loan loan2 = new Loan("User1", "Test Book", "BOOK");
+
+        assertEquals("User1", loan1.getBorrower());
+        assertEquals("User1", loan2.getBorrower());
+    }
+
+    @Test
+    void testReturnedBookNoFineEvenIfOverdue() {
+        Loan loan = new Loan("User1", "Test Book", "BOOK",
+                LocalDate.now().minusDays(30).toString(),
+                LocalDate.now().minusDays(2).toString(),
+                false, 0);
         loan.markReturned();
         loan.checkOverdue();
         assertEquals(0, loan.getFine());
     }
 
     @Test
-    void testBookLoanAndCDLoanHaveDifferentDueDates() {
-        Loan bookLoan = new Loan("User9", sampleBook);
-        Loan cdLoan = new Loan("User9", sampleCD);
-        assertNotEquals(bookLoan.getDueDate(), cdLoan.getDueDate());
+    void testFineAccumulatesCorrectlyOverMultipleDays() {
+        Loan loan = new Loan("User1", "Test Book", "BOOK",
+                LocalDate.now().minusDays(35).toString(),
+                LocalDate.now().minusDays(7).toString(),
+                false, 0);
+
+        loan.checkOverdue();
+        assertEquals(7, loan.getFine());
     }
 
     @Test
-    void testFineRemainsZeroIfBeforeDueDate() {
-        Loan loan = new Loan("User10", sampleBook);
+    void testPayFineAfterPartialOverdue() {
+        Loan loan = new Loan("User1", "Test Book", "BOOK",
+                LocalDate.now().minusDays(31).toString(),
+                LocalDate.now().minusDays(3).toString(),
+                false, 0);
+
+        loan.checkOverdue();
+        double fineBefore = loan.getFine();
+        loan.payFine();
         assertEquals(0, loan.getFine());
+        assertTrue(fineBefore > 0);
+    }
+
+    @Test
+    void testLoanConstructorWithAllFields() {
+        Loan loan = new Loan("User1", "Test Book", "BOOK",
+                LocalDate.now().minusDays(5).toString(),
+                LocalDate.now().plusDays(10).toString(),
+                true, 5.0);
+
+        assertEquals("User1", loan.getBorrower());
+        assertEquals("Test Book", loan.getItemTitle());
+        assertEquals(5.0, loan.getFine());
+        assertTrue(loan.isReturned());
+        assertEquals("BOOK", loan.getMediaType());
     }
 }

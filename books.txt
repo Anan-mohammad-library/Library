@@ -1,2 +1,0 @@
-Book A|Author A|123
-Book B|Author B|123
