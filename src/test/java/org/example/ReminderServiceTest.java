@@ -29,13 +29,13 @@ class ReminderServiceTest {
 
         emailLog = new File("emails.log");
 
-        // overdue BOOK loan
+
         Loan overdueLoan = new Loan("bob", "Clean Code", "BOOK",
                 LocalDate.now().minusDays(40).toString(),
                 LocalDate.now().minusDays(10).toString(),
                 false, 0);
 
-        // normal BOOK loan
+
         Loan normalLoan = new Loan("alice", "Java Concurrency", "BOOK",
                 LocalDate.now().minusDays(5).toString(),
                 LocalDate.now().plusDays(10).toString(),

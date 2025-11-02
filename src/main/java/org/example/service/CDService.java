@@ -55,4 +55,8 @@ public class CDService {
     public boolean exists(String title) {
         return cds.stream().anyMatch(c -> c.getTitle().equalsIgnoreCase(title));
     }
+    public List<CD> getAllCDs() {
+        return new ArrayList<>(cds); // assuming 'cds' is your in-memory list
+    }
 }
+

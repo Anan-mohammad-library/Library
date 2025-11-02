@@ -1,2 +1,4 @@
-ahmad|harry|CD|2025-11-02|2025-11-09|false|0.0
-ahmad|clean|BOOK|2025-11-02|2025-11-30|false|0.0
+ahmad|java|BOOK|2025-10-22|2025-10-30|false|3.0
+ahmad|C#|CD|2025-10-22|2025-10-29|false|80.0
+java|java|BOOK|2025-11-02|2025-11-30|false|0.0
+ameen|java|BOOK|2025-11-02|2025-11-30|false|0.0

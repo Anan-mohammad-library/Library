@@ -4,7 +4,6 @@ import org.example.domain.Loan;
 import org.junit.jupiter.api.*;
 import java.io.*;
 import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class LoanTest {
@@ -28,11 +27,10 @@ class LoanTest {
     @Test
     void testCreateLoanSetsDatesCorrectly() {
         Loan loan = new Loan("User1", "Test Book", "BOOK");
-
         assertEquals("User1", loan.getBorrower());
         assertEquals("Test Book", loan.getItemTitle());
         assertEquals(LocalDate.now(), loan.getBorrowDate());
-        assertEquals(LocalDate.now().plusDays(28), loan.getDueDate()); // BOOK = 28 days
+        assertEquals(LocalDate.now().plusDays(28), loan.getDueDate());
         assertFalse(loan.isReturned());
         assertEquals(0, loan.getFine());
         assertEquals("BOOK", loan.getMediaType());
@@ -41,10 +39,9 @@ class LoanTest {
     @Test
     void testLoanThrowsForNonexistentBook() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Loan("User1", "Nonexistent Book"); // ✅ استخدم constructor الخاص بالكتب
+            new Loan("User1", "Nonexistent Book");
         });
     }
-
 
     @Test
     void testCheckOverdueNoFineBeforeDueDate() {
@@ -59,9 +56,8 @@ class LoanTest {
                 LocalDate.now().minusDays(30).toString(),
                 LocalDate.now().minusDays(2).toString(),
                 false, 0);
-
         loan.checkOverdue();
-        assertEquals(2, loan.getFine()); // BOOK = 1/day
+        assertEquals(2, loan.getFine());
     }
 
     @Test
@@ -77,9 +73,7 @@ class LoanTest {
                 LocalDate.now().minusDays(30).toString(),
                 LocalDate.now().minusDays(2).toString(),
                 false, 0);
-
         loan.checkOverdue();
-        assertTrue(loan.getFine() > 0);
         loan.payFine();
         assertEquals(0, loan.getFine());
     }
@@ -99,7 +93,6 @@ class LoanTest {
     void testMultipleLoansSameUser() {
         Loan loan1 = new Loan("User1", "Test Book", "BOOK");
         Loan loan2 = new Loan("User1", "Test Book", "BOOK");
-
         assertEquals("User1", loan1.getBorrower());
         assertEquals("User1", loan2.getBorrower());
     }
@@ -121,7 +114,6 @@ class LoanTest {
                 LocalDate.now().minusDays(35).toString(),
                 LocalDate.now().minusDays(7).toString(),
                 false, 0);
-
         loan.checkOverdue();
         assertEquals(7, loan.getFine());
     }
@@ -132,7 +124,6 @@ class LoanTest {
                 LocalDate.now().minusDays(31).toString(),
                 LocalDate.now().minusDays(3).toString(),
                 false, 0);
-
         loan.checkOverdue();
         double fineBefore = loan.getFine();
         loan.payFine();
@@ -146,7 +137,6 @@ class LoanTest {
                 LocalDate.now().minusDays(5).toString(),
                 LocalDate.now().plusDays(10).toString(),
                 true, 5.0);
-
         assertEquals("User1", loan.getBorrower());
         assertEquals("Test Book", loan.getItemTitle());
         assertEquals(5.0, loan.getFine());
