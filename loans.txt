@@ -1,0 +1,2 @@
+ahmad|harry|CD|2025-11-02|2025-11-09|false|0.0
+ahmad|clean|BOOK|2025-11-02|2025-11-30|false|0.0

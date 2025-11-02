@@ -1,6 +1,5 @@
 package org.example;
 
-import org.example.domain.Book;
 import org.example.domain.Loan;
 import org.example.service.*;
 import org.junit.jupiter.api.*;
@@ -22,25 +21,32 @@ class ReminderServiceTest {
     void setup() {
         new File("loans.txt").delete();
         new File("emails.log").delete();
+
         loanService = new LoanService();
         reminderService = new ReminderService(
-                new EmailNotifier(new FakeEmailServer()), loanService);
+                new EmailNotifier(new FakeEmailServer()), loanService
+        );
 
         emailLog = new File("emails.log");
-        Loan overdueLoan = new Loan("bob", new Book("Clean Code", "Robert Martin", "123"));
-        Loan normalLoan = new Loan("alice", new Book("Java Concurrency", "Brian Goetz", "456"));
-        try {
-            var borrowField = Loan.class.getDeclaredField("borrowDate");
-            var dueField = Loan.class.getDeclaredField("dueDate");
-            borrowField.setAccessible(true);
-            dueField.setAccessible(true);
-            borrowField.set(overdueLoan, LocalDate.now().minusDays(40));
-            dueField.set(overdueLoan, LocalDate.now().minusDays(10));
-        } catch (Exception ignored) {}
+
+        // overdue BOOK loan
+        Loan overdueLoan = new Loan("bob", "Clean Code", "BOOK",
+                LocalDate.now().minusDays(40).toString(),
+                LocalDate.now().minusDays(10).toString(),
+                false, 0);
+
+        // normal BOOK loan
+        Loan normalLoan = new Loan("alice", "Java Concurrency", "BOOK",
+                LocalDate.now().minusDays(5).toString(),
+                LocalDate.now().plusDays(10).toString(),
+                false, 0);
+
         overdueLoan.checkOverdue();
         normalLoan.checkOverdue();
+
         loanService.getAllLoans().add(overdueLoan);
         loanService.getAllLoans().add(normalLoan);
+
         loanService.refreshOverdues();
     }
 
@@ -85,7 +91,11 @@ class ReminderServiceTest {
 
     @Test
     void testReturnedLoanDoesNotTriggerEmail() throws IOException {
-        Loan returned = new Loan("omar", new Book("Refactoring", "Fowler", "999"));
+        Loan returned = new Loan("omar", "Refactoring", "BOOK",
+                LocalDate.now().minusDays(5).toString(),
+                LocalDate.now().minusDays(2).toString(),
+                false, 0);
+
         returned.markReturned();
         loanService.getAllLoans().add(returned);
 

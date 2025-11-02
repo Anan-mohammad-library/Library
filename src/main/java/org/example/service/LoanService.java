@@ -14,7 +14,7 @@ public class LoanService {
         loans = loadLoans();
     }
 
-    // Recalculate fines for all
+
     public void refreshOverdues() {
         for (Loan loan : loans) {
             loan.checkOverdue();
@@ -22,7 +22,7 @@ public class LoanService {
         saveLoans();
     }
 
-    // Block user if has overdue or unpaid fines
+
     public boolean hasBlocks(String borrower) {
         refreshOverdues();
         for (Loan l : loans) {
@@ -46,7 +46,7 @@ public class LoanService {
         return out;
     }
 
-    // Borrow BOOK (default)
+
     public void borrowBook(String borrower, String bookTitle) {
         if (hasBlocks(borrower)) {
             System.out.println("❌ Borrow blocked: user has overdue books or unpaid fines.");
@@ -59,7 +59,7 @@ public class LoanService {
         System.out.println(borrower + " borrowed BOOK \"" + bookTitle + "\" until " + loan.getDueDate());
     }
 
-    // ✅ Borrow CD
+
     public void borrowCD(String borrower, String cdTitle) {
         if (hasBlocks(borrower)) {
             System.out.println("❌ Borrow blocked: user has overdue CDs/books or unpaid fines.");
@@ -72,7 +72,7 @@ public class LoanService {
         System.out.println(borrower + " borrowed CD \"" + cdTitle + "\" until " + loan.getDueDate());
     }
 
-    // Check overdue loans
+
     public void checkOverdueBooks() {
         boolean found = false;
         for (Loan loan : loans) {
@@ -86,7 +86,7 @@ public class LoanService {
         saveLoans();
     }
 
-    // Pay all fines for user
+
     public void payFine(String borrower) {
         boolean paid = false;
         for (Loan loan : loans) {
@@ -102,7 +102,7 @@ public class LoanService {
         saveLoans();
     }
 
-    // Save loans to file including mediaType
+
     private void saveLoans() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Loan loan : loans) {
@@ -122,7 +122,7 @@ public class LoanService {
         }
     }
 
-    // Load from file including mediaType
+
     private List<Loan> loadLoans() {
         List<Loan> list = new ArrayList<>();
         File file = new File(FILE_PATH);
