@@ -1,2 +1,5 @@
-ameen|111
-ahmad|123
+bob|pass|bob@example.com
+alice|pass|alice@example.com
+mohammad|1111|mohammadmarei44@gmail.com
+aki|123|s12240071@stu.najah.edu
+

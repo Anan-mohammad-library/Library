@@ -1,4 +1,2 @@
-ahmad|java|BOOK|2025-10-22|2025-10-30|false|3.0
-ahmad|C#|CD|2025-10-22|2025-10-29|false|80.0
-java|java|BOOK|2025-11-02|2025-11-30|false|0.0
-ameen|java|BOOK|2025-11-02|2025-11-30|false|0.0
+mohammad|c|BOOK|2025-10-04|2025-11-02|false|2.0
+aki|javs|BOOK|2025-11-04|2025-11-02|true|0.0

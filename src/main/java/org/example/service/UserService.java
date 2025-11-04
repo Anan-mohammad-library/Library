@@ -8,46 +8,40 @@ public class UserService {
 
     private static final String FILE = "users.txt";
     private final Map<String, String> users = new HashMap<>();
+    private final Map<String, String> emails = new HashMap<>();
 
     public UserService() {
         load();
     }
 
-
-    public boolean register(String username, String password) {
+    public boolean register(String username, String password, String email) {
         String key = username.toLowerCase();
-        if (users.containsKey(key)) {
-            System.out.println(" User already exists!");
-            return false;
-        }
+        if (users.containsKey(key)) return false;
         users.put(key, password);
+        emails.put(key, email.toLowerCase());
         save();
-        System.out.println(" User registered: " + username);
         return true;
     }
-
 
     public boolean login(String username, String password) {
         String key = username.toLowerCase();
         return users.containsKey(key) && users.get(key).equals(password);
     }
+
     public void unregister(String username, LoanService loanService) {
         String key = username.toLowerCase();
         boolean hasActiveOrFines = loanService.getAllLoans().stream()
                 .anyMatch(l -> l.getBorrower().equalsIgnoreCase(username) && (!l.isReturned() || l.getFine() > 0));
-
-        if (hasActiveOrFines) {
-            System.out.println("❌ Cannot unregister: User has active loans or unpaid fines.");
-            return;
-        }
-
-        if (users.remove(key) != null) {
-            save();
-            System.out.println("✅ User removed: " + username);
-        } else {
-            System.out.println("ℹ User not found: " + username);
-        }
+        if (hasActiveOrFines) return;
+        users.remove(key);
+        emails.remove(key);
+        save();
     }
+
+    public String getEmail(String username) {
+        return emails.get(username.toLowerCase());
+    }
+
     private void load() {
         File f = new File(FILE);
         if (!f.exists()) return;
@@ -56,23 +50,21 @@ public class UserService {
             while ((line = br.readLine()) != null) {
                 if (!line.isBlank()) {
                     String[] parts = line.split("\\|");
-                    if (parts.length >= 2)
+                    if (parts.length >= 3) {
                         users.put(parts[0].toLowerCase(), parts[1]);
+                        emails.put(parts[0].toLowerCase(), parts[2].toLowerCase());
+                    }
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Error loading users: " + e.getMessage());
-        }
+        } catch (IOException ignored) {}
     }
 
     private void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE))) {
-            for (Map.Entry<String, String> entry : users.entrySet()) {
-                bw.write(entry.getKey() + "|" + entry.getValue());
+            for (String key : users.keySet()) {
+                bw.write(key + "|" + users.get(key) + "|" + emails.get(key));
                 bw.newLine();
             }
-        } catch (IOException e) {
-            System.out.println("Error saving users: " + e.getMessage());
-        }
+        } catch (IOException ignored) {}
     }
 }

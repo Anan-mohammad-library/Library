@@ -16,7 +16,7 @@ public class LibraryApp {
         LoanService loanService = new LoanService();
 
         MemoryNotifier notifier = new MemoryNotifier();
-        ReminderService reminderService = new ReminderService(notifier, loanService);
+        ReminderService reminderService = new ReminderService(notifier, loanService, userService);
 
         System.out.println("Welcome to the Library Management System!");
 
@@ -79,37 +79,53 @@ public class LibraryApp {
                     System.out.print("Author: "); String a = input.nextLine();
                     System.out.print("ISBN: "); String isbn = input.nextLine();
                     bookService.addBook(t, a, isbn);
+                    System.out.println("Book added successfully.");
                 }
                 case 2 -> {
                     System.out.print("Search keyword: "); String keyword = input.nextLine();
                     bookService.search(keyword).forEach(System.out::println);
+                    System.out.println("Search completed.");
                 }
                 case 3 -> {
                     System.out.print("Borrower (user): "); String borrower = input.nextLine();
                     System.out.print("Book title: "); String bookTitle = input.nextLine();
                     loanService.borrowBook(borrower, bookTitle);
+                    System.out.println("Book borrowing process completed.");
                 }
-                case 4 -> loanService.showAllOverdues();
+                case 4 -> {
+                    loanService.showAllOverdues();
+                    System.out.println("All overdue loans displayed.");
+                }
                 case 5 -> {
                     System.out.print("Borrower: "); String borrower = input.nextLine();
                     loanService.payFine(borrower);
+                    System.out.println("Fine payment processed.");
                 }
                 case 6 -> {
                     System.out.print("New Username: "); String u = input.nextLine();
                     System.out.print("Password: "); String pw = input.nextLine();
-                    userService.register(u, pw);
+                    System.out.print("Email: "); String email = input.nextLine();
+                    userService.register(u, pw, email);
+                    System.out.println("User registration completed.");
                 }
                 case 7 -> {
                     System.out.print("Username to remove: "); String u = input.nextLine();
                     userService.unregister(u, loanService);
+                    System.out.println("User removed successfully.");
                 }
                 case 8 -> {
                     System.out.print("CD Title: "); String t = input.nextLine();
                     System.out.print("Artist: "); String a = input.nextLine();
                     System.out.print("CD ID: "); String id = input.nextLine();
                     cdService.addCD(t, a, id);
+                    System.out.println("CD added successfully.");
                 }
-                case 9 -> reminderService.sendOverdueReminders();
+                case 9 -> {
+                    System.out.print("Enter the email of the user to send reminder to: ");
+                    String targetEmail = input.nextLine();
+                    reminderService.sendOverdueReminderTo(targetEmail);
+                    System.out.println("Overdue reminder sent.");
+                }
                 case 10 -> {
                     System.out.println("All Books:");
                     bookService.getAllBooks().forEach(System.out::println);
@@ -117,8 +133,9 @@ public class LibraryApp {
                     cdService.getAllCDs().forEach(System.out::println);
                     System.out.println("All Loans:");
                     loanService.showAllLoans();
+                    System.out.println("Displaying all books, CDs, and loans.");
                 }
-                case 11 -> { adminService.logout(); System.out.println("Logged out."); return; }
+                case 11 -> { adminService.logout(); System.out.println("Admin logged out."); return; }
                 default -> System.out.println("Invalid option!");
             }
         }
@@ -162,23 +179,36 @@ public class LibraryApp {
                 case 1 -> {
                     System.out.print("Keyword: "); String keyword = input.nextLine();
                     bookService.search(keyword).forEach(System.out::println);
+                    System.out.println("Book search completed.");
                 }
                 case 2 -> {
                     System.out.print("Book title: "); String bookTitle = input.nextLine();
                     loanService.borrowBook(username, bookTitle);
+                    System.out.println("Book borrowing process completed.");
                 }
-                case 3 -> loanService.showUserOverdues(username);
-                case 4 -> loanService.payFine(username);
+                case 3 -> {
+                    loanService.showUserOverdues(username);
+                    System.out.println("Your overdue loans are displayed.");
+                }
+                case 4 -> {
+                    loanService.payFine(username);
+                    System.out.println("Fine payment processed.");
+                }
                 case 5 -> {
                     System.out.print("CD title: "); String cdKeyword = input.nextLine();
                     cdService.search(cdKeyword).forEach(System.out::println);
+                    System.out.println("CD search completed.");
                 }
                 case 6 -> {
                     System.out.print("CD title: "); String cdTitle = input.nextLine();
                     loanService.borrowCD(username, cdTitle);
+                    System.out.println("CD borrowing process completed.");
                 }
-                case 7 -> loanService.showUserLoans(username);
-                case 8 -> { System.out.println("Logged out."); return; }
+                case 7 -> {
+                    loanService.showUserLoans(username);
+                    System.out.println("Your current loans are displayed.");
+                }
+                case 8 -> { System.out.println("Logged out successfully."); return; }
                 default -> System.out.println("Invalid option!");
             }
         }

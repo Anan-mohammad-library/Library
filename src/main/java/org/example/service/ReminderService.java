@@ -4,50 +4,62 @@ import org.example.domain.Loan;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class ReminderService {
 
     private final Notifier notifier;
     private final LoanService loanService;
+    private final UserService userService;
+    private final EmailServer emailServer;
     private static final String LOG_FILE = "reminders.log";
 
-    public ReminderService(Notifier notifier, LoanService loanService) {
+    public ReminderService(Notifier notifier, LoanService loanService, UserService userService) {
+        this(notifier, loanService, userService, new JakartaEmailServer());
+    }
+
+    public ReminderService(Notifier notifier, LoanService loanService, UserService userService, EmailServer emailServer) {
         this.notifier = notifier;
         this.loanService = loanService;
+        this.userService = userService;
+        this.emailServer = emailServer;
+    }
+
+    public void sendOverdueReminderTo(String userEmail) {
+        loanService.refreshOverdues();
+        List<Loan> overdueLoans = loanService.getAllLoans().stream()
+                .filter(l -> !l.isReturned() && l.getFine() > 0)
+                .toList();
+
+        boolean sent = false;
+        for (Loan loan : overdueLoans) {
+            String borrowerEmail = userService.getEmail(loan.getBorrower());
+            if (borrowerEmail != null && borrowerEmail.equalsIgnoreCase(userEmail)) {
+                String msg = "You have overdue book(s). Please return them as soon as possible.";
+                notifier.notify(userEmail, msg);
+                try { emailServer.sendEmail(userEmail, msg); } catch (Exception ignored) {}
+                saveReminder(userEmail, msg);
+                sent = true;
+            }
+        }
+        if (!sent) System.out.println("❌ Invalid email for user: " + userEmail + ", skipping.");
     }
 
     public void sendOverdueReminders() {
         loanService.refreshOverdues();
-
-        Map<String, Long> overdueCount = loanService.getAllLoans().stream()
+        List<Loan> overdueLoans = loanService.getAllLoans().stream()
                 .filter(l -> !l.isReturned() && l.getFine() > 0)
-                .collect(Collectors.groupingBy(Loan::getBorrower, Collectors.counting()));
+                .toList();
 
-        if (overdueCount.isEmpty()) {
-            System.out.println("No overdue users to notify.");
-            return;
+        for (Loan loan : overdueLoans) {
+            String borrowerEmail = userService.getEmail(loan.getBorrower());
+            if (borrowerEmail != null) {
+                String msg = "You have overdue book(s). Please return them as soon as possible.";
+                notifier.notify(borrowerEmail, msg);
+                try { emailServer.sendEmail(borrowerEmail, msg); } catch (Exception ignored) {}
+                saveReminder(borrowerEmail, msg);
+            }
         }
-
-        int totalMessages = 0;
-        System.out.println(" Sending reminders...");
-
-        for (Map.Entry<String, Long> entry : overdueCount.entrySet()) {
-            String user = entry.getKey();
-            long count = entry.getValue();
-            String msg = "You have " + count + " overdue book(s).";
-
-            notifier.notify(user, msg);  // إرسال التذكير
-            System.out.println(" Reminder sent to " + user + ": " + msg);
-
-
-            saveReminder(user, msg);
-
-            totalMessages++;
-        }
-
-        System.out.println(" Total reminders sent: " + totalMessages);
     }
 
     private void saveReminder(String user, String message) {
