@@ -70,4 +70,23 @@ public class ReminderService {
             System.out.println("Error writing reminder log: " + e.getMessage());
         }
     }
+    public String createOverdueMessageFor(String username) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Dear ").append(username).append(",\n\n");
+        sb.append("You have overdue items in the library:\n");
+
+        List<Loan> loans = loanService.getAllLoans();
+        for (Loan loan : loans) {
+            if (loan.getBorrower().equalsIgnoreCase(username) && !loan.isReturned() && loan.getFine() > 0) {
+                sb.append("- ").append(loan.getMediaType()).append(": ").append(loan.getItemTitle())
+                        .append(" | Due: ").append(loan.getDueDate())
+                        .append(" | Fine: ").append(loan.getFine()).append("\n");
+            }
+        }
+
+        sb.append("\nPlease return your items or pay the fines promptly.\n");
+        sb.append("Thank you,\nLibrary Management System");
+        return sb.toString();
+    }
+
 }

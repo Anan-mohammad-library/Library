@@ -1,19 +1,33 @@
 package org.example;
+
 import org.example.service.AdminService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.example.domain.Admin;
+import org.junit.jupiter.api.*;
+
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdminServiceTest {
 
     private AdminService adminService;
+    private final String TEST_FILE = "admins_test.txt";
 
     @BeforeEach
     void setUp() {
-        adminService = new AdminService();
+
+        File file = new File(TEST_FILE);
+        if (file.exists()) file.delete();
+
+
+        adminService = new AdminService(TEST_FILE);
     }
 
+    @AfterEach
+    void tearDown() {
+        File file = new File(TEST_FILE);
+        if (file.exists()) file.delete();
+    }
 
     @Test
     void testLoginSuccess() {
@@ -23,7 +37,6 @@ class AdminServiceTest {
         assertEquals("anan", adminService.getCurrentAdmin().getUsername());
     }
 
-
     @Test
     void testLoginFailure() {
         assertFalse(adminService.login("wrong", "user"));
@@ -31,12 +44,10 @@ class AdminServiceTest {
         assertNull(adminService.getCurrentAdmin());
     }
 
-
     @Test
     void testLogoutAfterLogin() {
         adminService.login("anan", "1234");
         adminService.logout();
-
         assertFalse(adminService.isLoggedIn());
         assertNull(adminService.getCurrentAdmin());
     }
@@ -51,34 +62,11 @@ class AdminServiceTest {
         assertEquals("mohammad", adminService.getCurrentAdmin().getUsername());
     }
 
-
-    @Test
-    void testLoginWrongPassword() {
-        assertFalse(adminService.login("anan", "wrong"));
-        assertFalse(adminService.isLoggedIn());
-    }
-
-
-    @Test
-    void testLoginWithNullValues() {
-        assertFalse(adminService.login(null, null));
-        assertFalse(adminService.isLoggedIn());
-    }
-
-
-    @Test
-    void testLoginWithEmptyStrings() {
-        assertFalse(adminService.login("", ""));
-        assertFalse(adminService.isLoggedIn());
-    }
-
-
     @Test
     void testAddNewAdminAndLogin() {
         adminService.addAdmin("newadmin", "pass");
         assertTrue(adminService.login("newadmin", "pass"));
     }
-
 
     @Test
     void testGetAdminsNotEmpty() {
@@ -92,5 +80,23 @@ class AdminServiceTest {
         adminService.login("wrong2", "abc");
         assertFalse(adminService.isLoggedIn());
         assertNull(adminService.getCurrentAdmin());
+    }
+
+    @Test
+    void testLoginWrongPassword() {
+        assertFalse(adminService.login("anan", "wrong"));
+        assertFalse(adminService.isLoggedIn());
+    }
+
+    @Test
+    void testLoginWithNullValues() {
+        assertFalse(adminService.login(null, null));
+        assertFalse(adminService.isLoggedIn());
+    }
+
+    @Test
+    void testLoginWithEmptyStrings() {
+        assertFalse(adminService.login("", ""));
+        assertFalse(adminService.isLoggedIn());
     }
 }

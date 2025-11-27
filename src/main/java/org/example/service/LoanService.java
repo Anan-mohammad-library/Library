@@ -2,8 +2,7 @@ package org.example.service;
 
 import org.example.domain.Loan;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class LoanService {
 
@@ -13,10 +12,10 @@ public class LoanService {
     public LoanService() {
         loans = loadLoans();
     }
-    public List<Loan> getAllLoans() {
-        return loans; // returns all loans
-    }
 
+    public List<Loan> getAllLoans() {
+        return loans;
+    }
 
     public boolean hasBlocks(String borrower) {
         refreshOverdues();
@@ -29,11 +28,9 @@ public class LoanService {
         return false;
     }
 
-
-
     public void borrowBook(String borrower, String bookTitle) {
         if (hasBlocks(borrower)) {
-            System.out.println(" Borrow blocked: user has overdue items or unpaid fines.");
+            System.out.println("❌ Borrow blocked: user has overdue items or unpaid fines.");
             return;
         }
         Loan loan = new Loan(borrower, bookTitle, "BOOK");
@@ -54,18 +51,19 @@ public class LoanService {
     }
 
     public void showAllOverdues() {
-        refreshOverdues(); // updates fines for all loans
+        refreshOverdues();
         boolean found = false;
 
         for (Loan loan : loans) {
             if (!loan.isReturned() && loan.getFine() > 0) {
-                System.out.println(loan); // print each overdue loan
+                System.out.println(loan);
                 found = true;
             }
         }
 
-        if (!found) System.out.println(" No overdue items in the library.");
+        if (!found) System.out.println("ℹ No overdue items in the library.");
     }
+
     public void showUserOverdues(String borrower) {
         refreshOverdues();
         boolean found = false;
@@ -78,15 +76,15 @@ public class LoanService {
             }
         }
 
-        if (!found) System.out.println(" You have no overdue items.");
+        if (!found) System.out.println("ℹ You have no overdue items.");
     }
+
     public void refreshOverdues() {
         for (Loan loan : loans) {
-            loan.checkOverdue(); // each loan recalculates its fine
+            loan.checkOverdue();
         }
         saveLoans();
     }
-
 
     public void payFine(String borrower) {
         boolean paid = false;
@@ -94,7 +92,7 @@ public class LoanService {
             if (loan.getBorrower().equalsIgnoreCase(borrower) && loan.getFine() > 0) {
                 loan.payFine();
                 loan.markReturned();
-                System.out.println(" Fine paid for " + borrower + " on: " + loan.getItemTitle());
+                System.out.println("✅ Fine paid for " + borrower + " on: " + loan.getItemTitle());
                 paid = true;
             }
         }
@@ -134,10 +132,10 @@ public class LoanService {
         } catch (IOException e) { e.printStackTrace(); }
         return list;
     }
-    // LoanService.java
+
     public void showAllLoans() {
         if (loans.isEmpty()) {
-            System.out.println("No loans in the system.");
+            System.out.println("ℹ No loans in the system.");
             return;
         }
         for (Loan loan : loans) {
@@ -153,8 +151,17 @@ public class LoanService {
                 found = true;
             }
         }
-        if (!found) System.out.println("You have no loans.");
+        if (!found) System.out.println("ℹ You have no loans.");
     }
 
-
+    public List<String> getAllUsersWithOverdues() {
+        refreshOverdues();
+        Set<String> names = new HashSet<>();
+        for (Loan loan : loans) {
+            if (!loan.isReturned() && loan.getFine() > 0) {
+                names.add(loan.getBorrower());
+            }
+        }
+        return new ArrayList<>(names);
+    }
 }

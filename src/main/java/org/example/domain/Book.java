@@ -4,7 +4,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Book extends Media {
+public class Book extends Media implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private static final String FILE_PATH = "books.txt";
 
@@ -17,27 +18,21 @@ public class Book extends Media {
         this.isbn = isbn;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-    public String getIsbn() {
-        return isbn;
-    }
+    public String getAuthor() { return author; }
+    public String getIsbn() { return isbn; }
 
     @Override
-    public int getLoanDays() {
-        return 28;
-    }
+    public int getLoanDays() { return 28; }
+
     @Override
-    public double calculateFine(long overdueDays) {
-        return overdueDays * 10;
-    }
+    public double calculateFine(long overdueDays) { return overdueDays * 10; }
 
     @Override
     public String toString() {
         return "Book: " + title + " by " + author + " (ISBN: " + isbn + ")";
     }
 
+    // ملفات
     public static List<Book> loadBooksFromFile() {
         List<Book> books = new ArrayList<>();
         File file = new File(FILE_PATH);

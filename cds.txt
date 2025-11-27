@@ -1,4 +1,2 @@
 Thriller|Michael Jackson|1
 Bad|Michael Jackson|2
-C#|john|1
-c#|asp|1

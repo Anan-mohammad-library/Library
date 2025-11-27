@@ -1,2 +1,0 @@
-mohammad|c|BOOK|2025-10-04|2025-11-02|false|2.0
-aki|javs|BOOK|2025-11-04|2025-11-02|true|0.0

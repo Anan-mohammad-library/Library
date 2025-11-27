@@ -1,3 +1,4 @@
-java|alex|1234
-c|alex|111
-java|john|1234
+Java Basics|John Doe|12345
+Clean Code|Robert C. Martin|999
+Effective Java|Joshua Bloch|111
+Book X|James Gosling|444

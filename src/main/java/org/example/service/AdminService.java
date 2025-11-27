@@ -8,12 +8,18 @@ import java.util.List;
 
 public class AdminService {
 
-    private final String FILE_NAME = "admins.dat";
+    private final String fileName;
     private List<Admin> admins = new ArrayList<>();
     private boolean loggedIn = false;
     private Admin currentAdmin;
 
+    // constructor افتراضي يستخدم ملف admins.txt
     public AdminService() {
+        this("admins.txt");
+    }
+
+    public AdminService(String fileName) {
+        this.fileName = fileName;
         loadAdmins();
 
 
@@ -25,6 +31,8 @@ public class AdminService {
     }
 
     public boolean login(String username, String password) {
+        if (username == null || password == null) return false;
+
         for (Admin admin : admins) {
             if (admin.getUsername().equals(username) && admin.getPassword().equals(password)) {
                 loggedIn = true;
@@ -37,50 +45,70 @@ public class AdminService {
         return false;
     }
 
+    // تسجيل الخروج
     public void logout() {
         loggedIn = false;
         currentAdmin = null;
     }
 
     public boolean isLoggedIn() {
-
         return loggedIn;
     }
 
     public Admin getCurrentAdmin() {
-
         return currentAdmin;
     }
 
     public List<Admin> getAdmins() {
-
-        return admins;
+        return new ArrayList<>(admins);
     }
 
+    // إضافة Admin جديد
     public void addAdmin(String username, String password) {
+        if (username == null || username.isBlank()) return;
+        if (password == null || password.isBlank()) password = "default123"; // كلمة مرور افتراضية
+
         admins.add(new Admin(username, password));
+        saveAdmins();
+    }
+
+    // حذف Admin
+    public void removeAdmin(String username) {
+        if (username == null) return;
+        admins.removeIf(a -> a.getUsername().equals(username));
         saveAdmins();
     }
 
 
     private void saveAdmins() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
-            oos.writeObject(admins);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            for (Admin admin : admins) {
+                writer.write(admin.getUsername() + "|" + admin.getPassword());
+                writer.newLine();
+            }
         } catch (IOException e) {
             System.out.println("Error saving admins: " + e.getMessage());
         }
     }
 
 
-    @SuppressWarnings("unchecked")
     private void loadAdmins() {
-        File file = new File(FILE_NAME);
-        if (file.exists()) {
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-                admins = (List<Admin>) ois.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Error loading admins: " + e.getMessage());
+        File file = new File(fileName);
+        if (!file.exists()) return;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            admins.clear();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.isBlank()) {
+                    String[] parts = line.split("\\|");
+                    if (parts.length >= 2) {
+                        admins.add(new Admin(parts[0], parts[1]));
+                    }
+                }
             }
+        } catch (IOException e) {
+            System.out.println("Error loading admins: " + e.getMessage());
         }
     }
 }
