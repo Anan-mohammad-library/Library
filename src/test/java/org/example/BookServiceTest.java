@@ -20,7 +20,6 @@ class BookServiceTest {
         File file = new File(FILE_PATH);
         if (file.exists()) file.delete();
         service = new BookService();
-        // Set default search strategy to Title
         service.setSearchStrategy(new TitleSearchStrategy());
     }
 
@@ -33,8 +32,6 @@ class BookServiceTest {
         assertEquals("John Doe", result.get(0).getAuthor());
         assertEquals("12345", result.get(0).getIsbn());
     }
-
-
 
     @Test
     void testSearchNotFound() {
@@ -50,8 +47,6 @@ class BookServiceTest {
         assertEquals(1, result.size());
     }
 
-
-
     @Test
     void testBooksPersistedToFile() {
         service.addBook("Persistence Test", "Author X", "999");
@@ -60,7 +55,6 @@ class BookServiceTest {
         List<Book> result = newService.search("Persistence Test");
         assertEquals(1, result.size());
     }
-
 
     @Test
     void testAddMultipleBooksAndSearch() {
@@ -89,6 +83,7 @@ class BookServiceTest {
         assertEquals(1, result.size());
         assertEquals("Book X", result.get(0).getTitle());
     }
+
 
 
 }

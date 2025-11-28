@@ -91,4 +91,54 @@ public class MixedMediaTest {
         assertEquals(0, bookLoan.getFine());
         assertEquals(0, cdLoan.getFine());
     }
+    @Test
+    void borrowBookWithoutOverdueNoBlock() {
+        LoanService loanService = new LoanService();
+        loanService.borrowBook("Hana", "Clean Code");
+        assertFalse(loanService.hasBlocks("Hana"));
+    }
+
+    @Test
+    void overdueBlocksUser() {
+        LoanService loanService = new LoanService();
+        Loan l = new Loan("Max", "Old Book", "BOOK",
+                LocalDate.now().minusDays(20).toString(),
+                LocalDate.now().minusDays(1).toString(),
+                false, 0);
+        l.checkOverdue();
+        loanService.getAllLoans().add(l);
+        loanService.borrowBook("Max", "Another Book");
+        assertTrue(loanService.hasBlocks("Max"));
+    }
+
+    @Test
+    void payingFineRemovesBlock() {
+        LoanService loanService = new LoanService();
+        Loan l = new Loan("Sara", "Late CD", "CD",
+                LocalDate.now().minusDays(15).toString(),
+                LocalDate.now().minusDays(5).toString(),
+                false, 0);
+        l.checkOverdue();
+        loanService.getAllLoans().add(l);
+        loanService.borrowBook("Sara", "Another CD");
+        assertTrue(loanService.hasBlocks("Sara"));
+
+        loanService.payFine("Sara");
+        assertFalse(loanService.hasBlocks("Sara"));
+        assertEquals(0, l.getFine());
+    }
+
+    @Test
+    void refreshOverduesUpdatesFines() {
+        LoanService loanService = new LoanService();
+        Loan l = new Loan("Nina", "Old Book", "BOOK",
+                LocalDate.now().minusDays(25).toString(),
+                LocalDate.now().minusDays(5).toString(),
+                false, 0);
+        loanService.getAllLoans().add(l);
+        loanService.refreshOverdues();
+        assertTrue(l.getFine() > 0);
+        assertTrue(loanService.hasBlocks("Nina"));
+    }
+
 }

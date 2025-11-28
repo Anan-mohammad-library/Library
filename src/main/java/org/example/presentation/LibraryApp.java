@@ -1,14 +1,11 @@
 package org.example.presentation;
-
 import org.example.service.*;
 import org.example.domain.Book;
 import org.example.strategy.*;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-
 public class LibraryApp {
 
     public static void main(String[] args) {
