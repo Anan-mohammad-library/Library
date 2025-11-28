@@ -56,7 +56,7 @@ public class CDService {
         return cds.stream().anyMatch(c -> c.getTitle().equalsIgnoreCase(title));
     }
     public List<CD> getAllCDs() {
-        return new ArrayList<>(cds); // assuming 'cds' is your in-memory list
+        return new ArrayList<>(cds);
     }
 }
 

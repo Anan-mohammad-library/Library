@@ -224,7 +224,7 @@ public class LibraryApp {
         else {
             String message = reminderService.createOverdueMessageFor(target);
             notifier.notify(email, message);
-            System.out.println("✅ Reminder sent to: " + target + " (" + email + ")");
+            System.out.println(" Reminder sent to: " + target + " (" + email + ")");
         }
     }
 

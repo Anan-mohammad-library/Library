@@ -12,8 +12,6 @@ public class AdminService {
     private List<Admin> admins = new ArrayList<>();
     private boolean loggedIn = false;
     private Admin currentAdmin;
-
-    // constructor افتراضي يستخدم ملف admins.txt
     public AdminService() {
         this("admins.txt");
     }
@@ -44,8 +42,6 @@ public class AdminService {
         currentAdmin = null;
         return false;
     }
-
-    // تسجيل الخروج
     public void logout() {
         loggedIn = false;
         currentAdmin = null;
@@ -63,19 +59,12 @@ public class AdminService {
         return new ArrayList<>(admins);
     }
 
-    // إضافة Admin جديد
+
     public void addAdmin(String username, String password) {
         if (username == null || username.isBlank()) return;
-        if (password == null || password.isBlank()) password = "default123"; // كلمة مرور افتراضية
+        if (password == null || password.isBlank()) password = "default123";
 
         admins.add(new Admin(username, password));
-        saveAdmins();
-    }
-
-    // حذف Admin
-    public void removeAdmin(String username) {
-        if (username == null) return;
-        admins.removeIf(a -> a.getUsername().equals(username));
         saveAdmins();
     }
 

@@ -30,7 +30,7 @@ public class LoanService {
 
     public void borrowBook(String borrower, String bookTitle) {
         if (hasBlocks(borrower)) {
-            System.out.println("❌ Borrow blocked: user has overdue items or unpaid fines.");
+            System.out.println(" Borrow blocked: user has overdue items or unpaid fines.");
             return;
         }
         Loan loan = new Loan(borrower, bookTitle, "BOOK");
@@ -41,7 +41,7 @@ public class LoanService {
 
     public void borrowCD(String borrower, String cdTitle) {
         if (hasBlocks(borrower)) {
-            System.out.println("❌ Borrow blocked: user has overdue items or unpaid fines.");
+            System.out.println(" Borrow blocked: user has overdue items or unpaid fines.");
             return;
         }
         Loan loan = new Loan(borrower, cdTitle, "CD");
@@ -92,7 +92,7 @@ public class LoanService {
             if (loan.getBorrower().equalsIgnoreCase(borrower) && loan.getFine() > 0) {
                 loan.payFine();
                 loan.markReturned();
-                System.out.println("✅ Fine paid for " + borrower + " on: " + loan.getItemTitle());
+                System.out.println(" Fine paid for " + borrower + " on: " + loan.getItemTitle());
                 paid = true;
             }
         }
