@@ -37,9 +37,6 @@ public class LoanServiceRestrictionTest {
         assertTrue(loanService.hasBlocks("sam"));
     }
 
-
-
-
     @Test
     void calculatesCDFineCorrectly() {
         Loan l = new Loan(
@@ -54,7 +51,6 @@ public class LoanServiceRestrictionTest {
         l.checkOverdue();
         assertEquals(3 * 20, l.getFine());
     }
-
 
     @Test
     void blocksUserWithOverdueAfterBorrowAttempt() {
@@ -79,5 +75,55 @@ public class LoanServiceRestrictionTest {
     void userWithoutOverdueHasNoBlocks() {
         loanService.borrowBook("nina", "Book X");
         assertFalse(loanService.hasBlocks("nina"));
+    }
+
+
+
+    @Test
+    void payFineResetsUserBlocks() {
+        Loan l = new Loan(
+                "kate",
+                "Book Z",
+                "BOOK",
+                LocalDate.now().minusDays(20).toString(),
+                LocalDate.now().minusDays(1).toString(),
+                false,
+                0
+        );
+        l.checkOverdue();
+        loanService.getAllLoans().add(l);
+        loanService.borrowBook("kate", "Another Book");
+
+        assertTrue(loanService.hasBlocks("kate"));
+        loanService.payFine("kate");
+        assertFalse(loanService.hasBlocks("kate"));
+        assertEquals(0, l.getFine());
+    }
+
+    @Test
+    void borrowBookWorksForMultipleUsers() {
+        loanService.borrowBook("anna", "Book 1");
+        loanService.borrowBook("bob", "Book 2");
+
+        assertTrue(loanService.getAllLoans().stream().anyMatch(loan -> loan.getBorrower().equals("anna")));
+        assertTrue(loanService.getAllLoans().stream().anyMatch(loan -> loan.getBorrower().equals("bob")));
+    }
+
+    @Test
+    void overdueRefreshUpdatesFines() {
+        Loan l = new Loan(
+                "mike",
+                "Old Book",
+                "BOOK",
+                LocalDate.now().minusDays(30).toString(),
+                LocalDate.now().minusDays(5).toString(),
+                false,
+                0
+        );
+        loanService.getAllLoans().add(l);
+
+        loanService.refreshOverdues();
+        assertTrue(l.getFine() > 0);
+        assertTrue(loanService.hasBlocks("mike"));
     }
 }
