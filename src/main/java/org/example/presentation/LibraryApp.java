@@ -48,7 +48,6 @@ public class LibraryApp {
             }
         }
     }
-
     private static void adminMenu(Scanner input, AdminService adminService, BookService bookService,
                                   LoanService loanService, UserService userService, CDService cdService,
                                   ReminderService reminderService, Notifier notifier) {
