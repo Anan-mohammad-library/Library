@@ -107,13 +107,7 @@ Software Engineering Project
 An-Najah National University  
 Faculty of Engineering  
 
-## Future Improvements
 
-- Replace text files with a database (MySQL or MongoDB)
-- Add GUI or web-based interface
-- Add password hashing for security
-- Add permissions system and user roles
-- Implement automated background reminder scheduling
 
 ## License
 
