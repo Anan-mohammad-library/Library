@@ -28,7 +28,7 @@ public class BookService {
         saveBooks();
     }
 
-    // --- Strategy Pattern for Sorting ---
+
     public void setSortStrategy(BookSortStrategy strategy) {
         this.sortStrategy = strategy;
     }
@@ -42,7 +42,7 @@ public class BookService {
         return sortStrategy.sort(books);
     }
 
-    // --- Strategy Pattern for Searching ---
+
     public void setSearchStrategy(BookSearchStrategy strategy) {
         this.searchStrategy = strategy;
     }

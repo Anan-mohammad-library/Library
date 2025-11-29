@@ -32,7 +32,7 @@ public class Book extends Media implements Serializable {
         return "Book: " + title + " by " + author + " (ISBN: " + isbn + ")";
     }
 
-    // ملفات
+
     public static List<Book> loadBooksFromFile() {
         List<Book> books = new ArrayList<>();
         File file = new File(FILE_PATH);

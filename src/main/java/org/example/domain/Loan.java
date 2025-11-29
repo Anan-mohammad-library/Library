@@ -10,7 +10,7 @@ public class Loan implements Serializable {
 
     private String borrower;
     private String itemTitle;
-    private String mediaType; // "BOOK" or "CD"
+    private String mediaType;
     private LocalDate borrowDate;
     private LocalDate dueDate;
     private boolean returned;
@@ -20,7 +20,7 @@ public class Loan implements Serializable {
     public Loan(String borrower, String itemTitle) {
         this(borrower, itemTitle, "BOOK");
 
-        // Only validate if mediaType is BOOK
+
         if (!isBookAvailable(itemTitle)) {
             throw new IllegalArgumentException("❌ The book \"" + itemTitle + "\" does not exist in the library file.");
         }
