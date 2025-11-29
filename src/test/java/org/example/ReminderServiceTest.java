@@ -59,14 +59,13 @@ class ReminderServiceTest {
         reminderService = new ReminderService(fakeNotifier, loanService, userService, fakeEmailServer);
         logFile = new File("reminders.log");
 
-        // Loan متأخر
+
         Loan overdueLoan = new Loan("bob", "Clean Code", "BOOK",
                 LocalDate.now().minusDays(40).toString(),
                 LocalDate.now().minusDays(10).toString(), false, 0);
         overdueLoan.checkOverdue();
         loanService.getAllLoans().add(overdueLoan);
 
-        // Loan غير متأخر
         Loan normalLoan = new Loan("alice", "Java Concurrency", "BOOK",
                 LocalDate.now().minusDays(5).toString(),
                 LocalDate.now().plusDays(10).toString(), false, 0);

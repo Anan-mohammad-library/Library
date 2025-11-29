@@ -63,9 +63,5 @@ public class Book extends Media implements Serializable {
         }
     }
 
-    public static Book findBookByTitle(String title) {
-        return loadBooksFromFile().stream()
-                .filter(b -> b.getTitle().equalsIgnoreCase(title))
-                .findFirst().orElse(null);
-    }
+
 }

@@ -42,7 +42,7 @@ public class ReminderService {
                 sent = true;
             }
         }
-        if (!sent) System.out.println("❌ Invalid email for user: " + userEmail + ", skipping.");
+        if (!sent) System.out.println(" Invalid email for user: " + userEmail + ", skipping.");
     }
 
     public void sendOverdueReminders() {

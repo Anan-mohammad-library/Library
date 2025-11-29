@@ -22,12 +22,10 @@ public class Loan implements Serializable {
 
 
         if (!isBookAvailable(itemTitle)) {
-            throw new IllegalArgumentException("❌ The book \"" + itemTitle + "\" does not exist in the library file.");
+            throw new IllegalArgumentException(" The book \"" + itemTitle + "\" does not exist in the library file.");
         }
     }
 
-
-    // New constructor (supports BOOK/CD)
     public Loan(String borrower, String itemTitle, String mediaType) {
         this.borrower = borrower;
         this.itemTitle = itemTitle;
