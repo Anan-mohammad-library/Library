@@ -47,7 +47,7 @@ jobs:
 
      
       - name: Build and analyze
-        working-directory: Library  l
+        working-directory: Library  
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
