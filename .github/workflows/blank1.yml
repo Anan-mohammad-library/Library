@@ -3,11 +3,12 @@ name: SonarQube
 on:
   push:
     branches:
-      - master   
+      - master
+      - New  
   pull_request:
     branches:
-      - master   
-
+      - master
+      - New
 jobs:
   build:
     name: Build and analyze
