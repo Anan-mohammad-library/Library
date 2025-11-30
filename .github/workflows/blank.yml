@@ -3,13 +3,12 @@ name: SonarQube
 on:
   push:
     branches:
-      - main
       - master
+      - main
   pull_request:
     branches:
-      - main
       - master
-
+      - main
 
 jobs:
   build:
@@ -43,8 +42,8 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build and analyze
-        working-directory: .  
+        working-directory: ./Library
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-              -Dsonar.projectKey=Anan-mohammad-library_Library
+              -Dsonar.projectKey=Anan-mohammad-library/Library
