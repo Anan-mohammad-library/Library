@@ -34,7 +34,10 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: List files
+        run: ls -R
       - name: Build and analyze
+        # working-directory: ./Library   # ضع هنا المسار الصحيح بعد معرفة مكان pom.xml
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
