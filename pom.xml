@@ -12,6 +12,11 @@
         <maven.compiler.source>24</maven.compiler.source>
         <maven.compiler.target>24</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+            <sonar.organization>Anan-mohammad-library</sonar.organization>
+            <sonar.projectKey>Anan-mohammad-library/Library</sonar.projectKey>
+            <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
     </properties>
 
     <dependencies>
@@ -85,4 +90,7 @@
             </plugin>
         </plugins>
     </build>
+
+
+
 </project>
