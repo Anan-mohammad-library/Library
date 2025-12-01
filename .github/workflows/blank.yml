@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - master
-      - main
   pull_request:
     branches:
       - master
-      - main
 
 jobs:
   build:
@@ -37,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      # 4. Cache Maven packages (اختياري)
+      # 4. Cache Maven packages
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -46,14 +44,13 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       # 5. عرض الملفات للتأكد من وجود pom.xml
-      - name: Show files in repository
+      - name: Show files
         run: |
           pwd
           ls -la
 
-      # 6. Build and analyze with SonarCloud من مكان pom.xml
+      # 6. Build and analyze with SonarCloud
       - name: Build and Analyze
-        working-directory: .  # إذا كان pom.xml في مجلد فرعي، ضع اسم المجلد هنا
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
