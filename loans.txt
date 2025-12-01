@@ -1,2 +1,1 @@
-ahmad|cd|BOOK|2025-11-29|2025-11-27|true|0.0
-amro|java|BOOK|2025-11-29|2025-11-27|false|2.0
+ali|Book A|BOOK|2025-11-11|2025-11-26|false|5.0

@@ -13,8 +13,8 @@
         <sonar.projectKey>Anan-mohammad-library_Library</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
-        <maven.compiler.source>24</maven.compiler.source>
-        <maven.compiler.target>24</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

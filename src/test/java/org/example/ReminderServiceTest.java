@@ -182,4 +182,26 @@ class ReminderServiceTest {
         assertTrue(loanService.getAllLoans().stream().anyMatch(l -> l.getFine() > 0));
     }
 
+    @Test
+    void testReminderCreatesLogFile() throws IOException {
+        reminderService.sendOverdueReminderTo("bob@example.com");
+        assertTrue(new File("reminders.log").exists());
+    }
+    @Test
+    void testCreateOverdueMessageFor() {
+        String msg = reminderService.createOverdueMessageFor("bob");
+
+        assertTrue(msg.contains("Dear bob"));
+        assertTrue(msg.contains("Clean Code"));
+        assertTrue(msg.contains("BOOK"));
+        assertTrue(msg.contains("Fine"));
+    }
+    @Test
+    void testSendOverdueReminders() {
+        reminderService.sendOverdueReminders();
+
+        assertTrue(fakeNotifier.users.contains("bob@example.com"));
+        assertTrue(fakeEmailServer.emails.contains("bob@example.com"));
+    }
+
 }

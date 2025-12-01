@@ -4,11 +4,9 @@ import org.example.domain.Loan;
 import org.example.service.CDService;
 import org.example.service.LoanService;
 import org.junit.jupiter.api.*;
-
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoanServiceCDTest {
@@ -90,13 +88,24 @@ public class LoanServiceCDTest {
         assertEquals(1 * 20, loan.getFine());
     }
 
-
-
     @Test
-    void testBorrowCDAlreadyBorrowed() {
+    void testBorrowCDAlreadyBorrowedOK() {
         loanService.borrowCD("Ali", "Thriller");
         loanService.borrowCD("Sara", "Thriller");
         List<Loan> loans = loanService.getAllLoans();
         assertEquals(2, loans.size());
+    }
+
+    @Test
+    void testBorrowCDBlockIfUserHasOverdue() {
+        Loan l = new Loan("John", "Bad", "CD",
+                LocalDate.now().minusDays(20).toString(),
+                LocalDate.now().minusDays(5).toString(),
+                false, 0);
+        l.checkOverdue();
+        loanService.getAllLoans().add(l);
+
+        loanService.borrowCD("John", "Thriller");
+        assertTrue(loanService.hasBlocks("John"));
     }
 }

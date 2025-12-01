@@ -19,71 +19,105 @@ class BookServiceTest {
     void setup() {
         File file = new File(FILE_PATH);
         if (file.exists()) file.delete();
-        service = new BookService();
-        service.setSearchStrategy(new TitleSearchStrategy());
+        service = new BookService(); // will auto-load defaults if no file exists
     }
 
     @Test
-    void testAddBookAndSearch() {
-        service.addBook("Java Basics", "John Doe", "12345");
-        List<Book> result = service.search("Java Basics");
+    void testConstructorLoadsDefaultBooks() {
+        List<Book> result = service.getAllBooks();
+        assertEquals(3, result.size()); // 3 default books
+    }
+
+    @Test
+    void testAddBook() {
+        service.addBook("New Book", "Author X", "777");
+        List<Book> result = service.getAllBooks();
+        assertEquals(4, result.size()); // 3 default +1
+    }
+
+    @Test
+    void testSaveAndLoadBooks() {
+        service.addBook("Persistence Test", "My Author", "999");
+        BookService newService = new BookService();
+        List<Book> result = newService.search("Persistence Test");
         assertFalse(result.isEmpty());
-        assertEquals("Java Basics", result.get(0).getTitle());
-        assertEquals("John Doe", result.get(0).getAuthor());
-        assertEquals("12345", result.get(0).getIsbn());
+        assertTrue(result.stream().anyMatch(b -> b.getTitle().equals("Persistence Test")));
+    }
+
+
+    @Test
+    void testSortByTitle() {
+        service.setSortStrategy(new SortByTitleStrategy());
+        List<Book> result = service.sort();
+        assertEquals("Clean Code", result.get(0).getTitle());
+        assertEquals("Effective Java", result.get(1).getTitle());
+        assertEquals("Java Basics", result.get(2).getTitle());
     }
 
     @Test
-    void testSearchNotFound() {
-        List<Book> result = service.search("Unknown Title");
+    void testSortByAuthor() {
+        service.setSortStrategy(new SortByAuthorStrategy());
+        List<Book> result = service.sort();
+        assertEquals("John Doe", result.get(0).getAuthor());
+        assertEquals("Joshua Bloch", result.get(1).getAuthor());
+        assertEquals("Robert C. Martin", result.get(2).getAuthor());
+    }
+
+    @Test
+    void testSortWithNullStrategyReturnsOriginal() {
+        service.setSortStrategy(null);
+        List<Book> result = service.sort();
+        assertEquals(service.getAllBooks().size(), result.size());
+    }
+
+    @Test
+    void testGetSortStrategy() {
+        SortByTitleStrategy s = new SortByTitleStrategy();
+        service.setSortStrategy(s);
+        assertEquals(s, service.getSortStrategy());
+    }
+
+    @Test
+    void testGetSearchStrategy() {
+        TitleSearchStrategy s = new TitleSearchStrategy();
+        service.setSearchStrategy(s);
+        assertEquals(s, service.getSearchStrategy());
+    }
+
+    @Test
+    void testSearchWithNullStrategyReturnsOriginal() {
+        service.setSearchStrategy(null);
+        List<Book> result = service.search("anything");
+        assertEquals(service.getAllBooks().size(), result.size());
+    }
+
+    @Test
+    void testSearchByTitle() {
+        service.setSearchStrategy(new TitleSearchStrategy());
+        List<Book> result = service.search("Java");
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void testSearchByAuthor() {
+        service.setSearchStrategy(new AuthorSearchStrategy());
+        List<Book> result = service.search("Martin");
+        assertEquals(1, result.size());
+        assertEquals("Clean Code", result.get(0).getTitle());
+    }
+
+    @Test
+    void testSearchBookNotFound() {
+        service.setSearchStrategy(new TitleSearchStrategy());
+        List<Book> result = service.search("UnknownTitleXYZ");
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void testCaseInsensitiveSearch() {
-        service.setSearchStrategy(new TitleSearchStrategy());
-        service.addBook("Spring Framework", "Rod Johnson", "555");
-        List<Book> result = service.search("spring");
-        assertEquals(1, result.size());
+    void testGetAllBooksReturnsCopyNotReference() {
+        List<Book> books = service.getAllBooks();
+        books.clear();
+        assertEquals(3, service.getAllBooks().size()); // internal list not affected
     }
-
-    @Test
-    void testBooksPersistedToFile() {
-        service.addBook("Persistence Test", "Author X", "999");
-        BookService newService = new BookService();
-        newService.setSearchStrategy(new TitleSearchStrategy());
-        List<Book> result = newService.search("Persistence Test");
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void testAddMultipleBooksAndSearch() {
-        service.addBook("Book 1", "Author 1", "001");
-        service.addBook("Book 2", "Author 2", "002");
-        service.addBook("Book 3", "Author 3", "003");
-        service.setSearchStrategy(new TitleSearchStrategy());
-        List<Book> result = service.search("Book");
-        assertEquals(3, result.size());
-    }
-
-    @Test
-    void testSearchPartialTitle() {
-        service.setSearchStrategy(new TitleSearchStrategy());
-        service.addBook("Java Concurrency", "Author X", "333");
-        List<Book> result = service.search("Concur");
-        assertEquals(1, result.size());
-        assertEquals("Java Concurrency", result.get(0).getTitle());
-    }
-
-    @Test
-    void testSearchPartialAuthor() {
-        service.setSearchStrategy(new AuthorSearchStrategy());
-        service.addBook("Book X", "James Gosling", "444");
-        List<Book> result = service.search("Gosling");
-        assertEquals(1, result.size());
-        assertEquals("Book X", result.get(0).getTitle());
-    }
-
-
 
 }
