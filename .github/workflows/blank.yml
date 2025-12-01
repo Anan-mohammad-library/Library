@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # تأكد من الحصول على كامل التاريخ لكل commit
+          fetch-depth: 0  # لضمان جلب كل commit والملفات الحديثة
 
       # 2. Set up JDK 17
       - name: Set up JDK 17
@@ -45,8 +45,8 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # 5. عرض الملفات للتأكد من وجود pom.xml
-      - name: List files in repository
+      # 5. Display repository files to verify pom.xml
+      - name: Show files in repository
         run: |
           pwd
           ls -la
@@ -56,10 +56,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          if [ ! -f pom.xml ]; then
-            echo "Error: pom.xml not found in repository root!"
-            exit 1
-          fi
+          echo "Running Maven build and SonarCloud analysis..."
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=Anan-mohammad-library/Library \
             -Dsonar.organization=anan-mohammad-library \
