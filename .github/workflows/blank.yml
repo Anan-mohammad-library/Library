@@ -1,25 +1,26 @@
-name: SonarQube
+name: SonarQube Analysis
+
 on:
   push:
     branches:
-      - main
       - master
+      - main
   pull_request:
-    types: [opened, synchronize, reopened]
     branches:
-      - main
       - master
+      - main
 
 jobs:
   build:
-    name: Build and analyze
+    name: Build and Analyze
     runs-on: ubuntu-latest
+
     steps:
       # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # تأكد من الحصول على كامل التاريخ لكل commit
 
       # 2. Set up JDK 17
       - name: Set up JDK 17
@@ -36,7 +37,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      # 4. Cache Maven packages (اختياري، يمكن تعطيله إذا يسبب مشاكل)
+      # 4. Cache Maven packages (اختياري)
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -44,15 +45,21 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # 5. List files to verify pom.xml exists
-      - name: List files in repo
-        run: ls -la
+      # 5. عرض الملفات للتأكد من وجود pom.xml
+      - name: List files in repository
+        run: |
+          pwd
+          ls -la
 
       # 6. Build and analyze with SonarCloud
-      - name: Build and analyze
+      - name: Build and Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          if [ ! -f pom.xml ]; then
+            echo "Error: pom.xml not found in repository root!"
+            exit 1
+          fi
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=Anan-mohammad-library/Library \
             -Dsonar.organization=anan-mohammad-library \
