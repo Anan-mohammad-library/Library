@@ -3,10 +3,10 @@ name: SonarQube Analysis
 on:
   push:
     branches:
-      - master
+      - '**'   # أي فرع
   pull_request:
     branches:
-      - master
+      - '**'   # أي فرع
 
 jobs:
   build:
@@ -14,11 +14,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository بالكامل
-      - name: Checkout repository
+      # 1. Checkout جميع الفروع مع ref master
+      - name: Checkout master
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # لضمان جلب كل commit وجميع الملفات
+          ref: master
+          fetch-depth: 0
 
       # 2. Set up JDK 17
       - name: Set up JDK 17
@@ -43,10 +44,13 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # 5. عرض الملفات للتأكد من وجود pom.xml
-      - name: Show files
+      # 5. التأكد من وجود pom.xml
+      - name: Check pom.xml
         run: |
-          pwd
+          if [ ! -f pom.xml ]; then
+            echo "pom.xml not found in master!"
+            exit 1
+          fi
           ls -la
 
       # 6. Build and analyze with SonarCloud
