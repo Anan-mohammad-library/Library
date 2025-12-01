@@ -16,21 +16,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout branch master (حتى لو workflow شغّل على main)
       - name: Checkout master
         uses: actions/checkout@v4
         with:
           ref: master
           fetch-depth: 0
 
-      # 2. Set up JDK 24
       - name: Set up JDK 24
         uses: actions/setup-java@v4
         with:
           java-version: 24
           distribution: 'temurin'
 
-      # 3. Cache SonarQube packages
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -38,7 +35,6 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      # 4. Cache Maven packages
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -46,7 +42,6 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # 5. Check pom.xml
       - name: Check pom.xml
         run: |
           if [ ! -f pom.xml ]; then
@@ -55,14 +50,13 @@ jobs:
           fi
           ls -la
 
-      # 6. Build and analyze with SonarCloud
       - name: Build and Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           echo "Running Maven build and SonarCloud analysis..."
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=Anan-mohammad-library/Library \
+            -Dsonar.projectKey=Anan-mohammad-library_Library \
             -Dsonar.organization=anan-mohammad-library \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.branch.name=main
