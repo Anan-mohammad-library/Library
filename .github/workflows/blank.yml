@@ -16,11 +16,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository
+      # 1. Checkout repository بالكامل
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # لضمان جلب كل commit والملفات الحديثة
+          fetch-depth: 0  # لضمان جلب كل commit وجميع الملفات
 
       # 2. Set up JDK 17
       - name: Set up JDK 17
@@ -45,14 +45,15 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # 5. Display repository files to verify pom.xml
+      # 5. عرض الملفات للتأكد من وجود pom.xml
       - name: Show files in repository
         run: |
           pwd
           ls -la
 
-      # 6. Build and analyze with SonarCloud
+      # 6. Build and analyze with SonarCloud من مكان pom.xml
       - name: Build and Analyze
+        working-directory: .  # إذا كان pom.xml في مجلد فرعي، ضع اسم المجلد هنا
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
