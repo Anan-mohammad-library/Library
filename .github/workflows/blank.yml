@@ -3,10 +3,12 @@ name: SonarQube Analysis
 on:
   push:
     branches:
-      - '**'   # أي فرع
+      - master
+      - main
   pull_request:
     branches:
-      - '**'   # أي فرع
+      - master
+      - main
 
 jobs:
   build:
@@ -14,19 +16,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout جميع الفروع مع ref master
-      - name: Checkout master
+      # 1. Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: master
           fetch-depth: 0
 
-      # 2. Set up JDK 17
-      - name: Set up JDK 17
+      # 2. Set up JDK 24
+      - name: Set up JDK 24
         uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: 'zulu'
+          java-version: 24
+          distribution: 'temurin'  # يدعم JDK 24
 
       # 3. Cache SonarQube packages
       - name: Cache SonarQube packages
@@ -48,7 +49,7 @@ jobs:
       - name: Check pom.xml
         run: |
           if [ ! -f pom.xml ]; then
-            echo "pom.xml not found in master!"
+            echo "pom.xml not found!"
             exit 1
           fi
           ls -la
