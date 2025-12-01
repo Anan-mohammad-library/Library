@@ -2,9 +2,13 @@ name: SonarQube Analysis
 
 on:
   push:
-    branches: [ main, master ]
+    branches:
+      - main
+      - master
   pull_request:
-    branches: [ main, master ]
+    branches:
+      - main
+      - master
 
 jobs:
   build:
@@ -12,38 +16,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       
-      - name: Set up JDK 24 (Compile only)
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
+          java-version: 17
           distribution: 'temurin'
-          java-version: 24
-
-      - name: Compile the project
-        run: mvn -B -DskipTests=true clean package
 
       
-      - name: Set up JDK 21 (Tests + JaCoCo)
-        uses: actions/setup-java@v4
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
         with:
-          distribution: 'temurin'
-          java-version: 21
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: |
+            ${{ runner.os }}-sonar
 
-      - name: Run tests and generate coverage
-        run: mvn -B clean verify
+      
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2
 
-      # Step 3: SonarCloud Analysis
-      - name: SonarCloud Scan
+      
+      - name: Check pom.xml
+        run: |
+          if [ ! -f pom.xml ]; then
+            echo "pom.xml not found!"
+            exit 1
+          fi
+          ls -la
+
+      
+      - name: Build and Analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          echo "Running Maven build and SonarCloud analysis..."
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=Anan-mohammad-library_Library \
             -Dsonar.organization=anan-mohammad-library \
-            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.branch.name=main
