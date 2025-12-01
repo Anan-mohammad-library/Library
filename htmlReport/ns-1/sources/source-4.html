@@ -1,0 +1,222 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Loan</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.domain</a>
+</div>
+
+<h1>Coverage Summary for Class: Loan (org.example.domain)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Loan</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (15/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (40/40)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.domain;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.temporal.ChronoUnit;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class Loan implements Serializable {
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    private String borrower;
+&nbsp;    private String itemTitle;
+&nbsp;    private String mediaType;
+&nbsp;    private LocalDate borrowDate;
+&nbsp;    private LocalDate dueDate;
+&nbsp;    private boolean returned;
+&nbsp;    private double fine;
+&nbsp;
+&nbsp;
+&nbsp;    public Loan(String borrower, String itemTitle) {
+<b class="fc">&nbsp;        this(borrower, itemTitle, &quot;BOOK&quot;);</b>
+&nbsp;
+&nbsp;
+<b class="pc">&nbsp;        if (!isBookAvailable(itemTitle)) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot; The book \&quot;&quot; + itemTitle + &quot;\&quot; does not exist in the library file.&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public Loan(String borrower, String itemTitle, String mediaType) {</b>
+<b class="fc">&nbsp;        this.borrower = borrower;</b>
+<b class="fc">&nbsp;        this.itemTitle = itemTitle;</b>
+<b class="fc">&nbsp;        this.mediaType = mediaType.toUpperCase();</b>
+<b class="fc">&nbsp;        this.borrowDate = LocalDate.now();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (mediaType.equalsIgnoreCase(&quot;CD&quot;)) {</b>
+<b class="fc">&nbsp;            this.dueDate = borrowDate.plusDays(7);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            this.dueDate = borrowDate.plusDays(28);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        this.returned = false;</b>
+<b class="fc">&nbsp;        this.fine = 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public Loan(String borrower, String itemTitle, String mediaType,
+<b class="fc">&nbsp;                String borrowDate, String dueDate, boolean returned, double fine) {</b>
+&nbsp;
+<b class="fc">&nbsp;        this.borrower = borrower;</b>
+<b class="fc">&nbsp;        this.itemTitle = itemTitle;</b>
+<b class="fc">&nbsp;        this.mediaType = mediaType;</b>
+<b class="fc">&nbsp;        this.borrowDate = LocalDate.parse(borrowDate);</b>
+<b class="fc">&nbsp;        this.dueDate = LocalDate.parse(dueDate);</b>
+<b class="fc">&nbsp;        this.returned = returned;</b>
+<b class="fc">&nbsp;        this.fine = fine;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private boolean isBookAvailable(String title) {
+<b class="fc">&nbsp;        List&lt;Book&gt; books = Book.loadBooksFromFile();</b>
+<b class="fc">&nbsp;        return books.stream().anyMatch(b -&gt; b.getTitle().equalsIgnoreCase(title));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void checkOverdue() {
+<b class="fc">&nbsp;        if (!returned &amp;&amp; LocalDate.now().isAfter(dueDate)) {</b>
+<b class="fc">&nbsp;            long daysLate = ChronoUnit.DAYS.between(dueDate, LocalDate.now());</b>
+&nbsp;
+<b class="fc">&nbsp;            if (mediaType.equals(&quot;CD&quot;)) {</b>
+<b class="fc">&nbsp;                fine = daysLate * 20;</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                fine = daysLate * 1;</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="fc">&nbsp;            fine = 0;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void markReturned() {
+<b class="fc">&nbsp;        this.returned = true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void payFine() {
+<b class="fc">&nbsp;        fine = 0;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public String getBorrower() { return borrower; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public String getItemTitle() { return itemTitle; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public LocalDate getBorrowDate() { return borrowDate; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public LocalDate getDueDate() { return dueDate; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public boolean isReturned() { return returned; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public double getFine() { return fine; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public String getMediaType() { return mediaType; }</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="fc">&nbsp;        return String.format(</b>
+&nbsp;                &quot;%s: %s | Borrower: %s | Due: %s | Returned: %s | Fine: %.2f&quot;,
+<b class="fc">&nbsp;                mediaType, itemTitle, borrower, dueDate, returned, fine</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-12-01 09:56</div>
+</div>
+</body>
+</html>

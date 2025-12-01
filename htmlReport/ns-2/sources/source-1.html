@@ -1,0 +1,368 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LibraryApp</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.presentation</a>
+</div>
+
+<h1>Coverage Summary for Class: LibraryApp (org.example.presentation)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LibraryApp</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/50)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/143)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.presentation;
+&nbsp;import org.example.service.*;
+&nbsp;import org.example.domain.Book;
+&nbsp;import org.example.strategy.*;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Scanner;
+&nbsp;import java.util.Set;
+<b class="nc">&nbsp;public class LibraryApp {</b>
+&nbsp;
+&nbsp;    public static void main(String[] args) {
+<b class="nc">&nbsp;        Scanner input = new Scanner(System.in);</b>
+<b class="nc">&nbsp;        AdminService adminService = new AdminService();</b>
+<b class="nc">&nbsp;        UserService userService = new UserService();</b>
+<b class="nc">&nbsp;        BookService bookService = new BookService();</b>
+<b class="nc">&nbsp;        CDService cdService = new CDService();</b>
+<b class="nc">&nbsp;        LoanService loanService = new LoanService();</b>
+<b class="nc">&nbsp;        EmailServer emailServer = new JakartaEmailServer();</b>
+<b class="nc">&nbsp;        Notifier notifier = new EmailNotifier(emailServer);</b>
+&nbsp;
+<b class="nc">&nbsp;        ReminderService reminderService = new ReminderService(notifier, loanService, userService);</b>
+&nbsp;
+<b class="nc">&nbsp;        System.out.println(&quot;Welcome to the Library Management System!&quot;);</b>
+&nbsp;
+&nbsp;        while (true) {
+<b class="nc">&nbsp;            System.out.println(&quot;\nWho are you?&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;1. Admin&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;2. User&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;3. Exit&quot;);</b>
+<b class="nc">&nbsp;            System.out.print(&quot;Enter your choice: &quot;);</b>
+&nbsp;
+&nbsp;            int roleChoice;
+&nbsp;            try {
+<b class="nc">&nbsp;                roleChoice = Integer.parseInt(input.nextLine());</b>
+&nbsp;            } catch (NumberFormatException e) {
+<b class="nc">&nbsp;                System.out.println(&quot;Enter a number 1–3.&quot;);</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            switch (roleChoice) {</b>
+<b class="nc">&nbsp;                case 1 -&gt; adminMenu(input, adminService, bookService, loanService, userService, cdService, reminderService, notifier);</b>
+<b class="nc">&nbsp;                case 2 -&gt; userMenu(input, loanService, bookService, cdService, userService, notifier);</b>
+&nbsp;                case 3 -&gt; {
+<b class="nc">&nbsp;                    System.out.println(&quot;Exiting...&quot;);</b>
+&nbsp;                    return;
+&nbsp;                }
+<b class="nc">&nbsp;                default -&gt; System.out.println(&quot;Invalid choice. Try again!&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;    private static void adminMenu(Scanner input, AdminService adminService, BookService bookService,
+&nbsp;                                  LoanService loanService, UserService userService, CDService cdService,
+&nbsp;                                  ReminderService reminderService, Notifier notifier) {
+&nbsp;
+<b class="nc">&nbsp;        System.out.print(&quot;Admin Username: &quot;);</b>
+<b class="nc">&nbsp;        String username = input.nextLine();</b>
+<b class="nc">&nbsp;        System.out.print(&quot;Admin Password: &quot;);</b>
+<b class="nc">&nbsp;        String password = input.nextLine();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!adminService.login(username, password)) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Invalid username or password!&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        System.out.println(&quot;Admin logged in successfully!&quot;);</b>
+&nbsp;
+&nbsp;        while (true) {
+<b class="nc">&nbsp;            System.out.println(&quot;\nADMIN MENU&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;1. Add Book&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;2. Search Book&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;3. Borrow Book (as user)&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;4. Show All Overdues&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;5. Pay Fine&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;6. Register User&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;7. Unregister User&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;8. Add CD&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;9. Send Overdue Reminders&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;10. Show All Books, CDs and Loans&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;11. Logout&quot;);</b>
+<b class="nc">&nbsp;            System.out.print(&quot;Enter your choice: &quot;);</b>
+&nbsp;
+&nbsp;            int choice;
+<b class="nc">&nbsp;            try { choice = Integer.parseInt(input.nextLine()); }</b>
+<b class="nc">&nbsp;            catch (NumberFormatException e) { System.out.println(&quot;Enter a valid number.&quot;); continue; }</b>
+&nbsp;
+<b class="nc">&nbsp;            switch (choice) {</b>
+&nbsp;                case 1 -&gt; {
+<b class="nc">&nbsp;                    System.out.print(&quot;Book title: &quot;); String t = input.nextLine();</b>
+<b class="nc">&nbsp;                    System.out.print(&quot;Author: &quot;); String a = input.nextLine();</b>
+<b class="nc">&nbsp;                    System.out.print(&quot;ISBN: &quot;); String isbn = input.nextLine();</b>
+<b class="nc">&nbsp;                    bookService.addBook(t, a, isbn);</b>
+<b class="nc">&nbsp;                    System.out.println(&quot;Book added successfully.&quot;);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                case 2 -&gt; {
+<b class="nc">&nbsp;                    System.out.println(&quot;Choose search strategy: 1-By Title, 2-By Author&quot;);</b>
+&nbsp;                    int searchChoice;
+<b class="nc">&nbsp;                    try { searchChoice = Integer.parseInt(input.nextLine()); }</b>
+<b class="nc">&nbsp;                    catch (NumberFormatException e) { searchChoice = 1; }</b>
+&nbsp;
+<b class="nc">&nbsp;                    switch (searchChoice) {</b>
+<b class="nc">&nbsp;                        case 2 -&gt; bookService.setSearchStrategy(new AuthorSearchStrategy());</b>
+<b class="nc">&nbsp;                        default -&gt; bookService.setSearchStrategy(new TitleSearchStrategy());</b>
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    System.out.print(&quot;Enter keyword: &quot;);</b>
+<b class="nc">&nbsp;                    String keyword = input.nextLine();</b>
+<b class="nc">&nbsp;                    List&lt;Book&gt; results = bookService.search(keyword);</b>
+<b class="nc">&nbsp;                    if (results.isEmpty()) System.out.println(&quot;No books found.&quot;);</b>
+<b class="nc">&nbsp;                    else results.forEach(System.out::println);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                case 3 -&gt; {
+<b class="nc">&nbsp;                    System.out.print(&quot;Borrower (user): &quot;); String borrower = input.nextLine();</b>
+<b class="nc">&nbsp;                    System.out.print(&quot;Book title: &quot;); String bookTitle = input.nextLine();</b>
+<b class="nc">&nbsp;                    loanService.borrowBook(borrower, bookTitle);</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                case 4 -&gt; loanService.showAllOverdues();</b>
+&nbsp;
+&nbsp;                case 5 -&gt; {
+<b class="nc">&nbsp;                    System.out.print(&quot;Borrower: &quot;); String borrower = input.nextLine();</b>
+<b class="nc">&nbsp;                    loanService.payFine(borrower);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                case 6 -&gt; {
+<b class="nc">&nbsp;                    System.out.print(&quot;New Username: &quot;); String u = input.nextLine();</b>
+<b class="nc">&nbsp;                    System.out.print(&quot;Password: &quot;); String pw = input.nextLine();</b>
+<b class="nc">&nbsp;                    System.out.print(&quot;Email: &quot;); String email = input.nextLine();</b>
+<b class="nc">&nbsp;                    if(userService.register(u, pw, email)) System.out.println(&quot;User registration completed.&quot;);</b>
+<b class="nc">&nbsp;                    else System.out.println(&quot;User already exists!&quot;);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                case 7 -&gt; {
+<b class="nc">&nbsp;                    System.out.print(&quot;Username to remove: &quot;); String u = input.nextLine();</b>
+<b class="nc">&nbsp;                    userService.unregister(u, loanService);</b>
+<b class="nc">&nbsp;                    System.out.println(&quot;User removed successfully.&quot;);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                case 8 -&gt; {
+<b class="nc">&nbsp;                    System.out.print(&quot;CD Title: &quot;); String t = input.nextLine();</b>
+<b class="nc">&nbsp;                    System.out.print(&quot;Artist: &quot;); String a = input.nextLine();</b>
+<b class="nc">&nbsp;                    System.out.print(&quot;CD ID: &quot;); String id = input.nextLine();</b>
+<b class="nc">&nbsp;                    cdService.addCD(t, a, id);</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                case 9 -&gt; sendReminders(input, userService, loanService, reminderService, notifier);</b>
+&nbsp;
+<b class="nc">&nbsp;                case 10 -&gt; showAllLibrary(input, bookService, cdService, loanService);</b>
+&nbsp;
+<b class="nc">&nbsp;                case 11 -&gt; { adminService.logout(); System.out.println(&quot;Admin logged out.&quot;); return; }</b>
+&nbsp;
+<b class="nc">&nbsp;                default -&gt; System.out.println(&quot;Invalid option!&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void userMenu(Scanner input, LoanService loanService, BookService bookService,
+&nbsp;                                 CDService cdService, UserService userService, Notifier notifier) {
+&nbsp;
+<b class="nc">&nbsp;        System.out.print(&quot;Username: &quot;); String username = input.nextLine();</b>
+<b class="nc">&nbsp;        System.out.print(&quot;Password: &quot;); String password = input.nextLine();</b>
+&nbsp;
+<b class="nc">&nbsp;        if(!userService.login(username, password)) { System.out.println(&quot;Invalid username or password!&quot;); return; }</b>
+<b class="nc">&nbsp;        System.out.println(&quot;Logged in successfully!&quot;);</b>
+&nbsp;
+&nbsp;        while(true) {
+<b class="nc">&nbsp;            System.out.println(&quot;\nUSER MENU&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;1. Search Book&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;2. Borrow Book&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;3. Show My Overdues&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;4. Pay Fine&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;5. Search CD&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;6. Borrow CD&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;7. Show My Loans&quot;);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;8. Logout&quot;);</b>
+<b class="nc">&nbsp;            System.out.print(&quot;Enter choice: &quot;);</b>
+&nbsp;
+&nbsp;            int choice;
+<b class="nc">&nbsp;            try { choice = Integer.parseInt(input.nextLine()); } catch (NumberFormatException e) { continue; }</b>
+&nbsp;
+<b class="nc">&nbsp;            switch(choice) {</b>
+&nbsp;                case 1 -&gt; {
+<b class="nc">&nbsp;                    System.out.println(&quot;Choose search strategy: 1-Title, 2-Author&quot;);</b>
+&nbsp;                    int searchChoice;
+<b class="nc">&nbsp;                    try { searchChoice = Integer.parseInt(input.nextLine()); } catch (NumberFormatException e) { searchChoice = 1; }</b>
+<b class="nc">&nbsp;                    switch (searchChoice) {</b>
+<b class="nc">&nbsp;                        case 2 -&gt; bookService.setSearchStrategy(new AuthorSearchStrategy());</b>
+<b class="nc">&nbsp;                        default -&gt; bookService.setSearchStrategy(new TitleSearchStrategy());</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    System.out.print(&quot;Enter keyword: &quot;); String keyword = input.nextLine();</b>
+<b class="nc">&nbsp;                    var results = bookService.search(keyword);</b>
+<b class="nc">&nbsp;                    if(results.isEmpty()) System.out.println(&quot;No books found.&quot;);</b>
+<b class="nc">&nbsp;                    else results.forEach(System.out::println);</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                case 2 -&gt; { System.out.print(&quot;Book title: &quot;); String bookTitle = input.nextLine(); loanService.borrowBook(username, bookTitle); }</b>
+<b class="nc">&nbsp;                case 3 -&gt; loanService.showUserOverdues(username);</b>
+<b class="nc">&nbsp;                case 4 -&gt; loanService.payFine(username);</b>
+<b class="nc">&nbsp;                case 5 -&gt; { System.out.print(&quot;CD title: &quot;); String cdKeyword = input.nextLine(); cdService.search(cdKeyword).forEach(System.out::println); }</b>
+<b class="nc">&nbsp;                case 6 -&gt; { System.out.print(&quot;CD title: &quot;); String cdTitle = input.nextLine(); loanService.borrowCD(username, cdTitle); }</b>
+<b class="nc">&nbsp;                case 7 -&gt; loanService.showUserLoans(username);</b>
+<b class="nc">&nbsp;                case 8 -&gt; { System.out.println(&quot;Logged out successfully.&quot;); return; }</b>
+<b class="nc">&nbsp;                default -&gt; System.out.println(&quot;Invalid option!&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void sendReminders(Scanner input, UserService userService, LoanService loanService, ReminderService reminderService, Notifier notifier) {
+<b class="nc">&nbsp;        loanService.refreshOverdues();</b>
+<b class="nc">&nbsp;        var allLoans = loanService.getAllLoans();</b>
+<b class="nc">&nbsp;        Set&lt;String&gt; overdueUsers = new HashSet&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (var loan : allLoans) if(!loan.isReturned() &amp;&amp; loan.getFine() &gt; 0) overdueUsers.add(loan.getBorrower());</b>
+&nbsp;
+<b class="nc">&nbsp;        if(overdueUsers.isEmpty()) { System.out.println(&quot;No users have overdue items.&quot;); return; }</b>
+&nbsp;
+<b class="nc">&nbsp;        System.out.println(&quot;Users with overdue items:&quot;); overdueUsers.forEach(System.out::println);</b>
+<b class="nc">&nbsp;        System.out.print(&quot;Enter username to send email: &quot;); String target = input.nextLine();</b>
+&nbsp;
+<b class="nc">&nbsp;        if(!overdueUsers.contains(target)) { System.out.println(&quot;User not in overdue list.&quot;); return; }</b>
+&nbsp;
+<b class="nc">&nbsp;        String email = userService.getEmail(target);</b>
+<b class="nc">&nbsp;        if(email == null) System.out.println(&quot;No email available.&quot;);</b>
+&nbsp;        else {
+<b class="nc">&nbsp;            String message = reminderService.createOverdueMessageFor(target);</b>
+<b class="nc">&nbsp;            notifier.notify(email, message);</b>
+<b class="nc">&nbsp;            System.out.println(&quot; Reminder sent to: &quot; + target + &quot; (&quot; + email + &quot;)&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void showAllLibrary(Scanner input, BookService bookService, CDService cdService, LoanService loanService) {
+<b class="nc">&nbsp;        System.out.println(&quot;Sort books? 1-Title, 2-Author, 3-No sort&quot;);</b>
+&nbsp;        int sortChoice;
+<b class="nc">&nbsp;        try { sortChoice = Integer.parseInt(input.nextLine()); } catch (NumberFormatException e) { sortChoice = 3; }</b>
+&nbsp;
+<b class="nc">&nbsp;        switch (sortChoice) {</b>
+<b class="nc">&nbsp;            case 1 -&gt; bookService.setSortStrategy(new SortByTitleStrategy());</b>
+<b class="nc">&nbsp;            case 2 -&gt; bookService.setSortStrategy(new SortByAuthorStrategy());</b>
+<b class="nc">&nbsp;            default -&gt; bookService.setSortStrategy(null);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        System.out.println(&quot;All Books:&quot;);</b>
+<b class="nc">&nbsp;        List&lt;Book&gt; booksToShow = (bookService.getSortStrategy() != null) ? bookService.sort() : bookService.getAllBooks();</b>
+<b class="nc">&nbsp;        booksToShow.forEach(System.out::println);</b>
+&nbsp;
+<b class="nc">&nbsp;        System.out.println(&quot;All CDs:&quot;);</b>
+<b class="nc">&nbsp;        cdService.getAllCDs().forEach(System.out::println);</b>
+&nbsp;
+<b class="nc">&nbsp;        System.out.println(&quot;All Loans:&quot;);</b>
+<b class="nc">&nbsp;        loanService.showAllLoans();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-12-01 09:56</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,178 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CDService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.service</a>
+</div>
+
+<h1>Coverage Summary for Class: CDService (org.example.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CDService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (5/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (14/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92%
+  </span>
+  <span class="absValue">
+    (23/25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.service;
+&nbsp;
+&nbsp;import org.example.domain.CD;
+&nbsp;import java.io.*;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;public class CDService {
+&nbsp;
+&nbsp;    private static final String FILE = &quot;cds.txt&quot;;
+&nbsp;    private List&lt;CD&gt; cds;
+&nbsp;
+<b class="fc">&nbsp;    public CDService() {</b>
+<b class="fc">&nbsp;        cds = load();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addCD(String title, String artist, String id) {
+<b class="fc">&nbsp;        cds.add(new CD(title, artist, id));</b>
+<b class="fc">&nbsp;        save();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;✅ CD added successfully!&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;CD&gt; search(String keyword) {
+<b class="fc">&nbsp;        String k = keyword.toLowerCase();</b>
+<b class="fc">&nbsp;        List&lt;CD&gt; res = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (CD c : cds) {</b>
+<b class="pc">&nbsp;            if (c.getTitle().toLowerCase().contains(k) || c.getArtist().toLowerCase().contains(k) || c.getId().contains(keyword))</b>
+<b class="fc">&nbsp;                res.add(c);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return res;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void save() {
+<b class="fc">&nbsp;        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE))) {</b>
+<b class="fc">&nbsp;            for (CD c : cds) {</b>
+<b class="fc">&nbsp;                bw.write(c.getTitle() + &quot;|&quot; + c.getArtist() + &quot;|&quot; + c.getId());</b>
+<b class="fc">&nbsp;                bw.newLine();</b>
+&nbsp;            }
+&nbsp;        } catch (Exception ignored){}
+&nbsp;    }
+&nbsp;
+&nbsp;    private List&lt;CD&gt; load() {
+<b class="fc">&nbsp;        List&lt;CD&gt; out = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        File f = new File(FILE);</b>
+<b class="fc">&nbsp;        if (!f.exists()) return out;</b>
+<b class="fc">&nbsp;        try (BufferedReader br = new BufferedReader(new FileReader(f))) {</b>
+&nbsp;            String line;
+<b class="fc">&nbsp;            while ((line = br.readLine()) != null) {</b>
+<b class="fc">&nbsp;                String[] p = line.split(&quot;\\|&quot;);</b>
+<b class="pc">&nbsp;                if (p.length == 3) out.add(new CD(p[0], p[1], p[2]));</b>
+&nbsp;            }
+&nbsp;        } catch (Exception ignored){}
+<b class="fc">&nbsp;        return out;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean exists(String title) {
+<b class="nc">&nbsp;        return cds.stream().anyMatch(c -&gt; c.getTitle().equalsIgnoreCase(title));</b>
+&nbsp;    }
+&nbsp;    public List&lt;CD&gt; getAllCDs() {
+<b class="nc">&nbsp;        return new ArrayList&lt;&gt;(cds);</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-12-01 09:56</div>
+</div>
+</body>
+</html>

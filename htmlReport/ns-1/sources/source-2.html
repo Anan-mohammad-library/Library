@@ -1,0 +1,183 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Book</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.domain</a>
+</div>
+
+<h1>Coverage Summary for Class: Book (org.example.domain)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Book</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (4/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (4/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60.9%
+  </span>
+  <span class="absValue">
+    (14/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.domain;
+&nbsp;
+&nbsp;import java.io.*;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class Book extends Media implements Serializable {
+&nbsp;
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;    private static final String FILE_PATH = &quot;books.txt&quot;;
+&nbsp;
+&nbsp;    private String author;
+&nbsp;    private String isbn;
+&nbsp;
+&nbsp;    public Book(String title, String author, String isbn) {
+<b class="fc">&nbsp;        super(title);</b>
+<b class="fc">&nbsp;        this.author = author;</b>
+<b class="fc">&nbsp;        this.isbn = isbn;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public String getAuthor() { return author; }</b>
+<b class="fc">&nbsp;    public String getIsbn() { return isbn; }</b>
+&nbsp;
+&nbsp;    @Override
+<b class="nc">&nbsp;    public int getLoanDays() { return 28; }</b>
+&nbsp;
+&nbsp;    @Override
+<b class="nc">&nbsp;    public double calculateFine(long overdueDays) { return overdueDays * 10; }</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;Book: &quot; + title + &quot; by &quot; + author + &quot; (ISBN: &quot; + isbn + &quot;)&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public static List&lt;Book&gt; loadBooksFromFile() {
+<b class="fc">&nbsp;        List&lt;Book&gt; books = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        File file = new File(FILE_PATH);</b>
+<b class="pc">&nbsp;        if (!file.exists()) return books;</b>
+&nbsp;
+<b class="fc">&nbsp;        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {</b>
+&nbsp;            String line;
+<b class="fc">&nbsp;            while ((line = reader.readLine()) != null) {</b>
+<b class="fc">&nbsp;                String[] parts = line.split(&quot;\\|&quot;);</b>
+<b class="pc">&nbsp;                if (parts.length == 3) {</b>
+<b class="fc">&nbsp;                    books.add(new Book(parts[0].trim(), parts[1].trim(), parts[2].trim()));</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            System.out.println(&quot;Error reading books.txt: &quot; + e.getMessage());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return books;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void saveBooksToFile(List&lt;Book&gt; books) {
+<b class="nc">&nbsp;        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {</b>
+<b class="nc">&nbsp;            for (Book b : books) {</b>
+<b class="nc">&nbsp;                writer.write(b.getTitle() + &quot;|&quot; + b.getAuthor() + &quot;|&quot; + b.getIsbn());</b>
+<b class="nc">&nbsp;                writer.newLine();</b>
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            System.out.println(&quot;Error writing to books.txt: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-12-01 09:56</div>
+</div>
+</body>
+</html>
