@@ -2,6 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
@@ -12,10 +13,10 @@
         <sonar.organization>anan-mohammad-library</sonar.organization>
         <sonar.projectKey>Anan-mohammad-library_Library</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
         <maven.compiler.source>24</maven.compiler.source>
         <maven.compiler.target>24</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
     </properties>
 
     <dependencies>
@@ -32,32 +33,30 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
         </dependency>
 
-
         <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>java-dotenv</artifactId>
             <version>5.2.2</version>
         </dependency>
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
-
-
-
     </dependencies>
 
     <build>
-
         <plugins>
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -67,9 +66,35 @@
                     <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>
+
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <executions>
+
+
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
-
 
 
 </project>
