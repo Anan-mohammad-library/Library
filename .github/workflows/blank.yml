@@ -3,12 +3,12 @@ name: SonarQube Analysis
 on:
   push:
     branches:
-      - master
       - main
+      - master
   pull_request:
     branches:
-      - master
       - main
+      - master
 
 jobs:
   build:
@@ -16,10 +16,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository
-      - name: Checkout repository
+      # 1. Checkout master branch (حتى لو workflow شغّل على main)
+      - name: Checkout master
         uses: actions/checkout@v4
         with:
+          ref: master
           fetch-depth: 0
 
       # 2. Set up JDK 24
@@ -49,7 +50,7 @@ jobs:
       - name: Check pom.xml
         run: |
           if [ ! -f pom.xml ]; then
-            echo "pom.xml not found!"
+            echo "pom.xml not found in master!"
             exit 1
           fi
           ls -la
