@@ -15,28 +15,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout full repo
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Always use master codebase
+      - name: Force switch to master branch (real project)
         run: |
-          echo "Switching to master code..."
+          echo "Switching to master branch..."
           git checkout master
+          echo "Project structure:"
           ls -R
 
+     
       - name: Set up JDK 24
         uses: actions/setup-java@v4
         with:
           java-version: 24
           distribution: temurin
 
-      - name: Build + Test + Generate JaCoCo report
+      # -------------------------------
+      # Cache Sonar + Maven
+      # -------------------------------
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+    
+      - name: Maven build, test, and generate JaCoCo report
         run: |
           mvn -B clean verify
 
-      - name: SonarCloud Analysis
+     
+      - name: Run SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
