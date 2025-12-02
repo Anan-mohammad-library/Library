@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout الفرع الذي سبب الحدث
+      # Checkout الفرع الذي تسبب بالحدث
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -54,20 +54,23 @@ jobs:
           echo "Looking for pom.xml..."
           find . -name "pom.xml"
 
-      # تحقق من وجود pom.xml أولاً
-      - name: Find pom.xml and set path
+      # تحقق من وجود pom.xml وأرسل مخرجات
+      - name: Find pom.xml
         id: pom
         run: |
           POM_PATH=$(find . -name "pom.xml" | head -n 1)
           if [ -z "$POM_PATH" ]; then
-            echo "pom.xml not found in current branch!"
-            exit 1
+            echo "No pom.xml found in branch $GITHUB_REF_NAME. Skipping build and analysis."
+            echo "::set-output name=found::false"
+          else
+            echo "Found pom.xml at $POM_PATH"
+            echo "::set-output name=found::true"
+            echo "::set-output name=dir::$(dirname $POM_PATH)"
           fi
-          echo "Found pom.xml at $POM_PATH"
-          echo "::set-output name=dir::$(dirname $POM_PATH)"
 
-      # Build و SonarCloud analysis من مسار pom.xml
+      # Build و SonarCloud analysis إذا كان pom.xml موجود
       - name: Build and Analyze
+        if: steps.pom.outputs.found == 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
