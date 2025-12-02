@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout الفرع الذي تسبب بالحدث
+      # Checkout الفرع الذي سبب الحدث
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
