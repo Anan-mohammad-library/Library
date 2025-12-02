@@ -8,6 +8,11 @@ public class Book extends Media implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String FILE_PATH = "books.txt";
+    private static final int LOAN_DAYS = 28;
+
+    public static final java.util.logging.Logger logger =
+            java.util.logging.Logger.getLogger(Book.class.getName());
+
 
     private String author;
     private String isbn;
@@ -22,16 +27,17 @@ public class Book extends Media implements Serializable {
     public String getIsbn() { return isbn; }
 
     @Override
-    public int getLoanDays() { return 28; }
+    public int getLoanDays() { return LOAN_DAYS; }
 
     @Override
-    public double calculateFine(long overdueDays) { return overdueDays * 10; }
+    public double calculateFine(long overdueDays) {
+        return overdueDays * 10.0;
+    }
 
     @Override
     public String toString() {
         return "Book: " + title + " by " + author + " (ISBN: " + isbn + ")";
     }
-
 
     public static List<Book> loadBooksFromFile() {
         List<Book> books = new ArrayList<>();
@@ -47,7 +53,7 @@ public class Book extends Media implements Serializable {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error reading books.txt: " + e.getMessage());
+            logger.severe("Error reading books.txt: " + e.getMessage());
         }
         return books;
     }
@@ -59,9 +65,7 @@ public class Book extends Media implements Serializable {
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.out.println("Error writing to books.txt: " + e.getMessage());
+            logger.severe("Error writing to books.txt: " + e.getMessage());
         }
     }
-
-
 }

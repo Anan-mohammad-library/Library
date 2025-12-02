@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import static org.example.domain.Book.logger;
+
 public class FakeEmailServer implements EmailServer {
 
     private static final String OUTBOX_FILE = "emails.log";
@@ -14,7 +16,7 @@ public class FakeEmailServer implements EmailServer {
             bw.write("TO: " + to + " | MSG: " + message);
             bw.newLine();
         } catch (IOException e) {
-            System.out.println("Error writing email: " + e.getMessage());
+            logger.severe("Error writing email: " + e.getMessage());
         }
     }
 }

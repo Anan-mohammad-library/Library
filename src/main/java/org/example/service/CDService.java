@@ -35,20 +35,33 @@ public class CDService {
                 bw.write(c.getTitle() + "|" + c.getArtist() + "|" + c.getId());
                 bw.newLine();
             }
-        } catch (Exception ignored){}
+        } catch (Exception e) {
+            System.err.println("Error saving CD file: " + e.getMessage());
+        }
     }
+
 
     private List<CD> load() {
         List<CD> out = new ArrayList<>();
         File f = new File(FILE);
+
         if (!f.exists()) return out;
+
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] p = line.split("\\|");
-                if (p.length == 3) out.add(new CD(p[0], p[1], p[2]));
+                if (p.length == 3) {
+                    out.add(new CD(p[0], p[1], p[2]));
+                } else {
+                    System.err.println("⚠ Invalid CD entry found and skipped: " + line);
+                }
             }
-        } catch (Exception ignored){}
+        } catch (Exception e) {
+            System.err.println(" Error loading CDs: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         return out;
     }
 

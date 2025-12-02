@@ -5,6 +5,8 @@ import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import java.util.Properties;
 
+import static org.example.domain.Book.logger;
+
 public class JakartaEmailServer implements EmailServer {
 
     private final Dotenv dotenv;
@@ -43,7 +45,7 @@ public class JakartaEmailServer implements EmailServer {
             msg.setText(message);
 
             Transport.send(msg);
-            System.out.println("✅ Email sent to " + to);
+            logger.severe(" Email sent to " + to);
         } catch (MessagingException e) {
             throw new RuntimeException("Error sending email: " + e.getMessage(), e);
         }

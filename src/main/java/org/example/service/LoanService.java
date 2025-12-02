@@ -4,6 +4,8 @@ import org.example.domain.Loan;
 import java.io.*;
 import java.util.*;
 
+import static org.example.domain.Book.logger;
+
 public class LoanService {
 
     private static final String FILE_PATH = "loans.txt";
@@ -30,24 +32,24 @@ public class LoanService {
 
     public void borrowBook(String borrower, String bookTitle) {
         if (hasBlocks(borrower)) {
-            System.out.println(" Borrow blocked: user has overdue items or unpaid fines.");
+            logger.severe(" Borrow blocked: user has overdue items or unpaid fines.");
             return;
         }
         Loan loan = new Loan(borrower, bookTitle, "BOOK");
         loans.add(loan);
         saveLoans();
-        System.out.println(borrower + " borrowed BOOK \"" + bookTitle + "\" until " + loan.getDueDate());
+        logger.severe(borrower + " borrowed BOOK \"" + bookTitle + "\" until " + loan.getDueDate());
     }
 
     public void borrowCD(String borrower, String cdTitle) {
         if (hasBlocks(borrower)) {
-            System.out.println(" Borrow blocked: user has overdue items or unpaid fines.");
+            logger.severe(" Borrow blocked: user has overdue items or unpaid fines.");
             return;
         }
         Loan loan = new Loan(borrower, cdTitle, "CD");
         loans.add(loan);
         saveLoans();
-        System.out.println(borrower + " borrowed CD \"" + cdTitle + "\" until " + loan.getDueDate());
+        logger.severe(borrower + " borrowed CD \"" + cdTitle + "\" until " + loan.getDueDate());
     }
 
     public void showAllOverdues() {
@@ -61,7 +63,7 @@ public class LoanService {
             }
         }
 
-        if (!found) System.out.println("ℹ No overdue items in the library.");
+        if (!found) logger.severe("ℹ No overdue items in the library.");
     }
 
     public void showUserOverdues(String borrower) {
@@ -76,7 +78,7 @@ public class LoanService {
             }
         }
 
-        if (!found) System.out.println("ℹ You have no overdue items.");
+        if (!found) logger.severe("ℹ You have no overdue items.");
     }
 
     public void refreshOverdues() {
@@ -92,11 +94,11 @@ public class LoanService {
             if (loan.getBorrower().equalsIgnoreCase(borrower) && loan.getFine() > 0) {
                 loan.payFine();
                 loan.markReturned();
-                System.out.println(" Fine paid for " + borrower + " on: " + loan.getItemTitle());
+                logger.severe(" Fine paid for " + borrower + " on: " + loan.getItemTitle());
                 paid = true;
             }
         }
-        if (!paid) System.out.println("ℹ No fines to pay for " + borrower);
+        if (!paid) logger.severe("ℹ No fines to pay for " + borrower);
         saveLoans();
     }
 
@@ -135,7 +137,7 @@ public class LoanService {
 
     public void showAllLoans() {
         if (loans.isEmpty()) {
-            System.out.println("ℹ No loans in the system.");
+            logger.severe("ℹ No loans in the system.");
             return;
         }
         for (Loan loan : loans) {
@@ -151,7 +153,7 @@ public class LoanService {
                 found = true;
             }
         }
-        if (!found) System.out.println("ℹ You have no loans.");
+        if (!found) logger.severe("ℹ You have no loans.");
     }
 
     public List<String> getAllUsersWithOverdues() {

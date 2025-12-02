@@ -3,8 +3,12 @@ package org.example.service;
 import org.example.domain.Admin;
 
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.example.domain.Book.logger;
 
 public class AdminService {
 
@@ -45,7 +49,7 @@ public class AdminService {
         return false;
     }
 
-    // تسجيل الخروج
+
     public void logout() {
         loggedIn = false;
         currentAdmin = null;
@@ -63,16 +67,37 @@ public class AdminService {
         return new ArrayList<>(admins);
     }
 
-    // إضافة Admin جديد
+
+
     public void addAdmin(String username, String password) {
         if (username == null || username.isBlank()) return;
-        if (password == null || password.isBlank()) password = "default123"; // كلمة مرور افتراضية
+        if (password == null || password.isBlank()) return;
 
-        admins.add(new Admin(username, password));
+
+        String hashedPassword = hashPassword(password);
+
+        admins.add(new Admin(username, hashedPassword));
         saveAdmins();
     }
 
-    // حذف Admin
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Encryption error\n", e);
+        }
+    }
+
+
     public void removeAdmin(String username) {
         if (username == null) return;
         admins.removeIf(a -> a.getUsername().equals(username));
@@ -87,7 +112,7 @@ public class AdminService {
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.out.println("Error saving admins: " + e.getMessage());
+            logger.severe("Error saving admins: " + e.getMessage());
         }
     }
 
@@ -108,7 +133,7 @@ public class AdminService {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error loading admins: " + e.getMessage());
+            logger.severe("Error loading admins: " + e.getMessage());
         }
     }
 }
