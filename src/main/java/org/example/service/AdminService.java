@@ -37,17 +37,21 @@ public class AdminService {
     public boolean login(String username, String password) {
         if (username == null || password == null) return false;
 
+        String hashed = hashPassword(password);
+
         for (Admin admin : admins) {
-            if (admin.getUsername().equals(username) && admin.getPassword().equals(password)) {
+            if (admin.getUsername().equals(username) && admin.getPassword().equals(hashed)) {
                 loggedIn = true;
                 currentAdmin = admin;
                 return true;
             }
         }
+
         loggedIn = false;
         currentAdmin = null;
         return false;
     }
+
 
 
     public void logout() {
