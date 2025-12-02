@@ -16,10 +16,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout الفرع الذي سبب الحدث
-      - name: Checkout repository
+      # Checkout فرع master دائمًا
+      - name: Checkout master
         uses: actions/checkout@v4
         with:
+          ref: master
           fetch-depth: 0
 
       # Setup JDK 24
@@ -48,36 +49,26 @@ jobs:
       # Debug: عرض الملفات ومكان pom.xml
       - name: Debug repository
         run: |
-          echo "Branch: ${{ github.ref_name }}"
+          echo "Branch checked out: master"
           echo "Current directory: $(pwd)"
           ls -R
           echo "Looking for pom.xml..."
           find . -name "pom.xml"
 
-      # تحقق من وجود pom.xml وأرسل مخرجات
-      - name: Find pom.xml
-        id: pom
-        run: |
-          POM_PATH=$(find . -name "pom.xml" | head -n 1)
-          if [ -z "$POM_PATH" ]; then
-            echo "No pom.xml found in branch $GITHUB_REF_NAME. Skipping build and analysis."
-            echo "::set-output name=found::false"
-          else
-            echo "Found pom.xml at $POM_PATH"
-            echo "::set-output name=found::true"
-            echo "::set-output name=dir::$(dirname $POM_PATH)"
-          fi
-
-      # Build و SonarCloud analysis إذا كان pom.xml موجود
+      # Build و SonarCloud analysis
       - name: Build and Analyze
-        if: steps.pom.outputs.found == 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          cd ${{ steps.pom.outputs.dir }}
+          POM_PATH=$(find . -name "pom.xml" | head -n 1)
+          if [ -z "$POM_PATH" ]; then
+            echo "pom.xml not found in master!"
+            exit 1
+          fi
+          cd $(dirname $POM_PATH)
           echo "Running Maven build and SonarCloud analysis from $(pwd)..."
           mvn -B -fae verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=Anan-mohammad-library_Library \
             -Dsonar.organization=anan-mohammad-library \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.branch.name=${{ github.ref_name }}
+            -Dsonar.branch.name=master
