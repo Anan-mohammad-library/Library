@@ -4,6 +4,8 @@ import org.example.domain.CD;
 import java.io.*;
 import java.util.*;
 
+import static org.example.domain.Book.logger;
+
 public class CDService {
 
     private static final String FILE = "cds.txt";
@@ -36,7 +38,7 @@ public class CDService {
                 bw.newLine();
             }
         } catch (Exception e) {
-            System.err.println("Error saving CD file: " + e.getMessage());
+            logger.severe("Error saving CD file: " + e.getMessage());
         }
     }
 
@@ -54,7 +56,7 @@ public class CDService {
                 if (p.length == 3) {
                     out.add(new CD(p[0], p[1], p[2]));
                 } else {
-                    System.err.println("⚠ Invalid CD entry found and skipped: " + line);
+                    logger.severe("⚠ Invalid CD entry found and skipped: " + line);
                 }
             }
         } catch (Exception e) {
