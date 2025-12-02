@@ -20,6 +20,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch master pom.xml
+        run: |
+          if ! [ -f pom.xml ]; then
+            echo "pom.xml not found on current branch, fetching from master..."
+            git fetch origin master
+            git checkout origin/master -- pom.xml
+          fi
+
       - name: Set up JDK 24
         uses: actions/setup-java@v4
         with:
@@ -40,24 +48,11 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Find pom.xml
-        id: find-pom
-        run: |
-          POM_PATH=$(find . -name "pom.xml" | head -n 1)
-          if [ -z "$POM_PATH" ]; then
-            echo "found=false" >> $GITHUB_OUTPUT
-          else
-            echo "found=true" >> $GITHUB_OUTPUT
-            echo "dir=$(dirname $POM_PATH)" >> $GITHUB_OUTPUT
-          fi
-
       - name: Build and SonarCloud Analysis
-        if: steps.find-pom.outputs.found == 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          cd ${{ steps.find-pom.outputs.dir }}
-          echo "Running Maven build and SonarCloud analysis from $(pwd)..."
+          echo "Found pom.xml in $(pwd)"
           mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=Anan-mohammad-library_Library \
             -Dsonar.organization=anan-mohammad-library \
