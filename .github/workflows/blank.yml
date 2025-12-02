@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-     
+      
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -29,7 +29,7 @@ jobs:
           java-version: 24
           distribution: temurin
 
-    
+      
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -48,22 +48,22 @@ jobs:
       
       - name: Debug project files
         run: |
+          echo "Branch: ${{ github.ref_name }}"
           echo "Current directory: $(pwd)"
           ls -la
           find . -name "*.java"
           if [ ! -f pom.xml ]; then
-            echo "pom.xml not found!"
+            echo "pom.xml not found in current directory!"
             exit 1
           fi
-          echo "pom.xml exists"
 
-      
+     
       - name: Build and Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           echo "Running Maven build and SonarCloud analysis..."
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          mvn -B -fae verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=Anan-mohammad-library_Library \
             -Dsonar.organization=anan-mohammad-library \
             -Dsonar.host.url=https://sonarcloud.io \
