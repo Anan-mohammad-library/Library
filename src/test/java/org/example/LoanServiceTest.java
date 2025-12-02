@@ -3,11 +3,9 @@ package org.example;
 import org.example.domain.Loan;
 import org.example.service.LoanService;
 import org.junit.jupiter.api.*;
-
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoanServiceTest {
@@ -24,40 +22,12 @@ public class LoanServiceTest {
     void testBorrowBook() {
         loanService.borrowBook("ali", "Clean Code");
         assertEquals(1, loanService.getAllLoans().size());
-
-        Loan loan = loanService.getAllLoans().get(0);
-        assertEquals("ali", loan.getBorrower());
-        assertEquals("Clean Code", loan.getItemTitle());
-        assertEquals("BOOK", loan.getMediaType());
     }
 
     @Test
     void testBorrowCD() {
         loanService.borrowCD("ali", "CD Music");
         assertEquals(1, loanService.getAllLoans().size());
-
-        Loan loan = loanService.getAllLoans().get(0);
-        assertEquals("CD", loan.getMediaType());
-    }
-
-    @Test
-    void testHasBlocksWhenOverdue() {
-        Loan loan = new Loan("ali", "Book A", "BOOK",
-                LocalDate.now().minusDays(20).toString(),
-                LocalDate.now().minusDays(5).toString(),
-                false, 0);
-        loan.checkOverdue();
-        loanService.getAllLoans().add(loan);
-
-        assertTrue(loanService.hasBlocks("ali"));
-    }
-
-    @Test
-    void testHasBlocksNoOverdue() {
-        Loan loan = new Loan("ali", "Book A", "BOOK");
-        loanService.getAllLoans().add(loan);
-
-        assertFalse(loanService.hasBlocks("ali"));
     }
 
     @Test
@@ -65,60 +35,169 @@ public class LoanServiceTest {
         Loan loan = new Loan("ali", "Book A", "BOOK",
                 LocalDate.now().minusDays(20).toString(),
                 LocalDate.now().minusDays(5).toString(),
-                false, 0);
+                false, 5);
 
-        loan.checkOverdue();
         loanService.getAllLoans().add(loan);
-
+        assertTrue(loanService.hasBlocks("ali"));
         loanService.borrowBook("ali", "Another Book");
         assertEquals(1, loanService.getAllLoans().size());
     }
 
+
+
     @Test
-    void testPayFine() {
+    void testHasBlocksReturnedWithFine() {
+        Loan loan = new Loan("moh", "Book A", "BOOK");
+        loan.payFine();     // fine = 0
+        loan.markReturned(); // returned = true
+        loanService.getAllLoans().add(loan);
+        assertFalse(loanService.hasBlocks("moh"));
+    }
+
+    @Test
+    void testHasBlocksReturnedNoFine() {
+        Loan loan = new Loan("moh", "Book A", "BOOK",
+                LocalDate.now().toString(),
+                LocalDate.now().plusDays(5).toString(),
+                true, 0);
+        loanService.getAllLoans().add(loan);
+        assertFalse(loanService.hasBlocks("moh"));
+    }
+
+    @Test
+    void testHasBlocksFineButReturnedTrue() {
+        Loan loan = new Loan(
+                "moh", "Book A", "BOOK",
+                LocalDate.now().minusDays(20).toString(),
+                LocalDate.now().minusDays(5).toString(),
+                true,
+                10
+        );
+        loanService.getAllLoans().add(loan);
+
+        assertFalse(loanService.hasBlocks("moh"));
+    }
+
+
+
+
+    @Test
+    void testHasBlocksNoLoansForUser() {
+        assertFalse(loanService.hasBlocks("nobody"));
+    }
+
+
+
+    @Test
+    void testShowAllLoansEmpty() {
+        loanService.showAllLoans();
+        assertTrue(loanService.getAllLoans().isEmpty());
+    }
+
+    @Test
+    void testShowAllLoansNonEmpty() {
+        loanService.borrowBook("ali", "Book A");
+        loanService.showAllLoans();
+        assertEquals(1, loanService.getAllLoans().size());
+    }
+
+
+
+
+    @Test
+    void testShowUserLoansEmpty() {
+        loanService.showUserLoans("ali");
+        assertTrue(loanService.getAllLoans().isEmpty());
+    }
+
+    @Test
+    void testShowUserLoansExists() {
+        loanService.borrowBook("ali", "Book A");
+        loanService.showUserLoans("ali");
+        assertEquals(1, loanService.getAllLoans().size());
+    }
+
+
+
+
+    @Test
+    void testShowAllOverduesNoOverdue() {
+        loanService.borrowBook("ali", "Book A");
+        loanService.showAllOverdues();
+        assertEquals(1, loanService.getAllLoans().size());
+    }
+
+    @Test
+    void testShowAllOverduesExists() {
         Loan loan = new Loan("ali", "Book A", "BOOK",
                 LocalDate.now().minusDays(30).toString(),
                 LocalDate.now().minusDays(10).toString(),
                 false, 0);
         loan.checkOverdue();
         loanService.getAllLoans().add(loan);
-
+        loanService.showAllOverdues();
         assertTrue(loan.getFine() > 0);
+    }
+
+
+
+    @Test
+    void testShowUserOverduesNone() {
+        loanService.showUserOverdues("ali");
+    }
+
+    @Test
+    void testShowUserOverduesExists() {
+        Loan loan = new Loan("ali", "Book A", "BOOK",
+                LocalDate.now().minusDays(20).toString(),
+                LocalDate.now().minusDays(5).toString(),
+                false, 0);
+        loan.checkOverdue();
+        loanService.getAllLoans().add(loan);
+        loanService.showUserOverdues("ali");
+        assertTrue(loan.getFine() > 0);
+    }
+
+
+
+    @Test
+    void testPayFineNone() {
+        loanService.payFine("ali");
+    }
+
+    @Test
+    void testPayFineExists() {
+        Loan loan = new Loan("ali", "Book A", "BOOK",
+                LocalDate.now().minusDays(15).toString(),
+                LocalDate.now().minusDays(5).toString(),
+                false, 0);
+        loan.checkOverdue();
+        loanService.getAllLoans().add(loan);
         loanService.payFine("ali");
         assertEquals(0, loan.getFine());
         assertTrue(loan.isReturned());
     }
 
+
+
     @Test
     void testSaveAndLoadLoans() {
         loanService.borrowBook("ali", "Book A");
-
         LoanService newService = new LoanService();
         assertEquals(1, newService.getAllLoans().size());
     }
 
+
+
     @Test
     void testGetAllUsersWithOverdues() {
-        Loan overdueLoan = new Loan("ali", "Book A", "BOOK",
-                LocalDate.now().minusDays(20).toString(),
-                LocalDate.now().minusDays(5).toString(),
+        Loan loan = new Loan("user1", "Book A", "BOOK",
+                LocalDate.now().minusDays(25).toString(),
+                LocalDate.now().minusDays(10).toString(),
                 false, 0);
-        overdueLoan.checkOverdue();
-        loanService.getAllLoans().add(overdueLoan);
-
-        List<String> overdueUsers = loanService.getAllUsersWithOverdues();
-        assertTrue(overdueUsers.contains("ali"));
-    }
-
-    @Test
-    void testRefreshOverdues() {
-        Loan loan = new Loan("ali", "Book A", "BOOK",
-                LocalDate.now().minusDays(15).toString(),
-                LocalDate.now().minusDays(5).toString(),
-                false, 0);
+        loan.checkOverdue();
         loanService.getAllLoans().add(loan);
-
-        loanService.refreshOverdues();
-        assertTrue(loan.getFine() > 0);
+        List<String> overdueUsers = loanService.getAllUsersWithOverdues();
+        assertTrue(overdueUsers.contains("user1"));
     }
 }

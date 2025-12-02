@@ -13,7 +13,7 @@ public class AdminService {
     private boolean loggedIn = false;
     private Admin currentAdmin;
 
-    // constructor افتراضي يستخدم ملف admins.txt
+
     public AdminService() {
         this("admins.txt");
     }
