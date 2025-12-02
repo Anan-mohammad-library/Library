@@ -17,7 +17,10 @@ class AdminServiceTest {
         File file = new File(TEST_FILE);
         if (file.exists()) file.delete();
         adminService = new AdminService(TEST_FILE);
+        adminService.addAdmin("anan", "1234");
+        adminService.addAdmin("mohammad", "123");
     }
+
 
     @AfterEach
     void tearDown() {
