@@ -39,6 +39,7 @@ class AdminServiceTest {
         assertFalse(adminService.isLoggedIn());
         assertNull(adminService.getCurrentAdmin());
     }
+
     @Test
     void testLoadAdminsIOException() throws Exception {
         File f = new File(TEST_FILE);
@@ -48,18 +49,18 @@ class AdminServiceTest {
         AdminService bad = new AdminService(TEST_FILE);
         assertNotNull(bad.getAdmins());
     }
+
     @Test
     void testSaveAdminsIOException() {
         AdminService bad = new AdminService("/root/forbidden.txt");
         assertDoesNotThrow(() -> bad.addAdmin("x", "123"));
     }
+
     @Test
     void testLoadAdminsFileNotExist() {
         File f = new File(TEST_FILE);
         if (f.exists()) f.delete();
-
         AdminService as = new AdminService(TEST_FILE);
-
         assertFalse(as.getAdmins().isEmpty());
     }
 
@@ -121,27 +122,31 @@ class AdminServiceTest {
     @Test
     void testAddAdminNullUsername() {
         int before = adminService.getAdmins().size();
-        adminService.addAdmin(null, "123");
+        boolean added = adminService.addAdmin(null, "123");
+        assertFalse(added);
         assertEquals(before, adminService.getAdmins().size());
     }
 
     @Test
     void testAddAdminEmptyUsername() {
         int before = adminService.getAdmins().size();
-        adminService.addAdmin("", "123");
+        boolean added = adminService.addAdmin("", "123");
+        assertFalse(added);
         assertEquals(before, adminService.getAdmins().size());
     }
 
     @Test
     void testAddAdminNullPassword() {
-        adminService.addAdmin("user1", null);
-        assertTrue(adminService.login("user1", "default123"));
+        boolean added = adminService.addAdmin("user1", null);
+        assertFalse(added);
+        assertFalse(adminService.login("user1", "default123"));
     }
 
     @Test
     void testAddAdminEmptyPassword() {
-        adminService.addAdmin("user2", "");
-        assertTrue(adminService.login("user2", "default123"));
+        boolean added = adminService.addAdmin("user2", "");
+        assertFalse(added);
+        assertFalse(adminService.login("user2", "default123"));
     }
 
     @Test

@@ -69,15 +69,14 @@ public class AdminService {
 
 
 
-    public void addAdmin(String username, String password) {
-        if (username == null || username.isBlank()) return;
-        if (password == null || password.isBlank()) return;
-
+    public boolean addAdmin(String username, String password) {
+        if (username == null || username.isBlank()) return false;
+        if (password == null || password.isBlank()) return false;
 
         String hashedPassword = hashPassword(password);
-
         admins.add(new Admin(username, hashedPassword));
         saveAdmins();
+        return true;
     }
 
 
