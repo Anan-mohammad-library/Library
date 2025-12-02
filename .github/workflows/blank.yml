@@ -3,11 +3,9 @@ name: SonarQube Analysis
 on:
   push:
     branches:
-      - main
       - master
   pull_request:
     branches:
-      - main
       - master
 
 jobs:
@@ -16,13 +14,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repository على الفرع الذي تسبب بالحدث
+      # Checkout الفرع master
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: master
           fetch-depth: 0
 
-      # Setup JDK
+      # Setup JDK 24
       - name: Set up JDK 24
         uses: actions/setup-java@v4
         with:
@@ -58,11 +57,11 @@ jobs:
       - name: Check pom.xml
         run: |
           if [ ! -f pom.xml ]; then
-            echo "pom.xml not found in current branch!"
+            echo "pom.xml not found in master!"
             exit 1
           fi
 
-      # Build and SonarCloud analysis
+      # Build و SonarCloud analysis
       - name: Build and Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -72,4 +71,4 @@ jobs:
             -Dsonar.projectKey=Anan-mohammad-library_Library \
             -Dsonar.organization=anan-mohammad-library \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.branch.name=${{ github.ref_name }}
+            -Dsonar.branch.name=master
