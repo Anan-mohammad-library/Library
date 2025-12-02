@@ -18,23 +18,21 @@ jobs:
         with:
           fetch-depth: 0
 
-     
+      
       - name: Fetch master code temporarily
         run: |
           echo "Fetching code from master branch..."
           git fetch origin master
           git checkout origin/master -- .
-          echo "Project structure (after fetching master):"
+          echo "Project structure after fetching master:"
           ls -R
 
-   
       - name: Set up JDK 24
         uses: actions/setup-java@v4
         with:
           java-version: 24
           distribution: temurin
 
-     
       - name: Cache Maven
         uses: actions/cache@v4
         with:
@@ -49,10 +47,11 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
+     
       - name: Build & Run Tests
         run: mvn -B clean verify
 
-     
+    
       - name: SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
