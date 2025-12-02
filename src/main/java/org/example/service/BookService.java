@@ -7,6 +7,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.domain.Book.logger;
+
 public class BookService {
     private static final String FILE_PATH = "books.txt";
     private List<Book> books;
@@ -67,7 +69,7 @@ public class BookService {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Error saving books: " + e.getMessage());
         }
     }
 
@@ -85,7 +87,7 @@ public class BookService {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Error loading books: " + e.getMessage());
         }
         return list;
     }

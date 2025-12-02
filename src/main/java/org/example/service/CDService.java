@@ -3,6 +3,7 @@ package org.example.service;
 import org.example.domain.CD;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
 
 import static org.example.domain.Book.logger;
 
@@ -60,8 +61,7 @@ public class CDService {
                 }
             }
         } catch (Exception e) {
-            System.err.println(" Error loading CDs: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error loading CDs", e);
         }
 
         return out;

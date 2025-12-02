@@ -114,7 +114,7 @@ public class LoanService {
                         loan.getFine());
                 writer.newLine();
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) {   logger.severe("Error saving loans: " + e.getMessage()); }
     }
 
     private List<Loan> loadLoans() {
@@ -131,7 +131,7 @@ public class LoanService {
                     list.add(loan);
                 }
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) {   logger.severe("Error loading loans: " + e.getMessage()); }
         return list;
     }
 
