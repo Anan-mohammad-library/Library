@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Fetch master pom.xml
+      - name: Fetch master pom.xml if missing
         run: |
           if ! [ -f pom.xml ]; then
             echo "pom.xml not found on current branch, fetching from master..."
@@ -48,13 +48,28 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Build and SonarCloud Analysis
+      - name: Build project + generate JaCoCo coverage
+        run: |
+          echo "Running build and generating JaCoCo report..."
+          mvn -B clean verify
+
+          echo "Checking if JaCoCo report was generated..."
+          if [ -f target/site/jacoco/jacoco.xml ]; then
+            echo "JaCoCo XML report found."
+          else
+            echo "ERROR: JaCoCo XML report NOT FOUND!"
+            ls -R target
+            exit 1
+          fi
+
+      - name: SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          echo "Found pom.xml in $(pwd)"
-          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          echo "Running SonarCloud analysis..."
+          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=Anan-mohammad-library_Library \
             -Dsonar.organization=anan-mohammad-library \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.branch.name=${{ github.ref_name }}
+            -Dsonar.branch.name=${{ github.ref_name }} \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
