@@ -65,9 +65,9 @@ public class Loan implements Serializable {
             long daysLate = ChronoUnit.DAYS.between(dueDate, LocalDate.now());
 
             if (mediaType.equals("CD")) {
-                fine = daysLate * 20;
+                fine = daysLate * 20.0;
             } else {
-                fine = daysLate * 1;
+                fine = daysLate * 1.0;
             }
         } else {
             fine = 0;
