@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.domain.Admin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.security.MessageDigest;
@@ -28,10 +29,11 @@ public class AdminService {
 
 
         if (admins.isEmpty()) {
-            admins.add(new Admin("anan", "1234"));
-            admins.add(new Admin("mohammad", "123"));
+            admins.add(new Admin("anan", hashPassword("1234")));
+            admins.add(new Admin("mohammad", hashPassword("123")));
             saveAdmins();
         }
+
     }
 
     public boolean login(String username, String password) {
@@ -84,6 +86,7 @@ public class AdminService {
     }
 
 
+    @NotNull
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -127,16 +130,26 @@ public class AdminService {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             admins.clear();
             String line;
+
             while ((line = reader.readLine()) != null) {
                 if (!line.isBlank()) {
                     String[] parts = line.split("\\|");
                     if (parts.length >= 2) {
-                        admins.add(new Admin(parts[0], parts[1]));
+                        String username = parts[0];
+                        String password = parts[1];
+                        if (password.length() != 64) {
+                            password = hashPassword(password);
+                        }
+
+                        admins.add(new Admin(username, password));
                     }
                 }
             }
+            saveAdmins();
+
         } catch (IOException e) {
             logger.severe("Error loading admins: " + e.getMessage());
         }
     }
+
 }

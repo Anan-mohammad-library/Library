@@ -7,7 +7,7 @@ public abstract class Media implements Serializable {
     protected String title;
     protected boolean available = true;
 
-    public Media(String title) {
+    protected Media(String title) {
         this.title = title;
     }
 
